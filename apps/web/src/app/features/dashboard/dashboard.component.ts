@@ -1,0 +1,104 @@
+import {
+  Component,
+  inject,
+  OnDestroy,
+  signal,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Subject, combineLatest, switchMap, catchError, of, takeUntil } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
+
+import { DashboardStateService } from '../../core/services/dashboard-state.service';
+import { BarometerService } from '../../core/services/barometer.service';
+import { MarketStatsService } from '../../core/services/market-stats.service';
+import { BarometerResult } from '../../core/models/barometer.model';
+import { MarketStats } from '../../core/models/market-stats.model';
+
+import { BarometerHeroComponent } from './components/barometer-hero/barometer-hero.component';
+import { StatsOverviewComponent } from './components/stats-overview/stats-overview.component';
+import { ChartTabGroupComponent } from './components/trend-chart/chart-tab-group/chart-tab-group.component';
+
+@Component({
+  selector: 'app-dashboard',
+  standalone: true,
+  imports: [
+    CommonModule,
+    BarometerHeroComponent,
+    StatsOverviewComponent,
+    ChartTabGroupComponent,
+  ],
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.scss',
+})
+export class DashboardComponent implements OnDestroy {
+  private state = inject(DashboardStateService);
+  private barometerService = inject(BarometerService);
+  private marketStatsService = inject(MarketStatsService);
+  private destroy$ = new Subject<void>();
+
+  readonly barometerData = signal<BarometerResult | null>(null);
+  readonly barometerLoading = signal<boolean>(false);
+  readonly barometerError = signal<string | null>(null);
+
+  readonly marketStatsData = signal<MarketStats[]>([]);
+  readonly todayStats = signal<MarketStats | null>(null);
+
+  private dateInitialized = false;
+
+  constructor() {
+    // 監聽日期變化 → 重新載入晴雨表（toObservable 必須在 injection context 內）
+    toObservable(this.state.selectedDate)
+      .pipe(
+        switchMap((date) => {
+          this.barometerLoading.set(true);
+          this.barometerError.set(null);
+          this.barometerData.set(null);
+          return this.barometerService.getBarometer(date).pipe(
+            catchError((err: HttpErrorResponse) => {
+              const msg = err.status === 404
+                ? '此日期無市場資料'
+                : `載入失敗 (${err.status})`;
+              this.barometerError.set(msg);
+              return of(null);
+            })
+          );
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((result) => {
+        this.barometerLoading.set(false);
+        this.barometerData.set(result);
+      });
+
+    // 監聽日期 + 時間範圍變化 → 重新載入市場數據
+    combineLatest([
+      toObservable(this.state.startDate),
+      toObservable(this.state.endDate),
+    ])
+      .pipe(
+        switchMap(([start, end]) =>
+          this.marketStatsService.getMarketStats(start, end).pipe(
+            catchError(() => of([] as MarketStats[]))
+          )
+        ),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((data) => {
+        this.marketStatsData.set(data);
+        const last = data.length > 0 ? data[data.length - 1] : null;
+        this.todayStats.set(last);
+
+        // 首次載入時，將選取日期設為最後一筆資料的日期
+        if (!this.dateInitialized && last) {
+          this.dateInitialized = true;
+          this.state.setDate(last.date);
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}

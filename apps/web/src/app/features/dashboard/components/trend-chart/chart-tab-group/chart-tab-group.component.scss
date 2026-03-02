@@ -1,0 +1,18 @@
+.chart-card {
+  border-radius: 16px;
+
+  mat-card-content {
+    padding: 0 !important;
+  }
+}
+
+.tab-content {
+  padding: 16px 16px 8px;
+
+  .indicator-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+}

@@ -1,0 +1,17 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.section {
+  .section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #444;
+    margin: 0 0 12px 0;
+    padding-left: 4px;
+    border-left: 3px solid #3B82F6;
+    padding-left: 10px;
+  }
+}

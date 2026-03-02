@@ -1,1 +1,53 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,
+  ),
+  typography: (
+    brand-family: 'Roboto, sans-serif',
+    plain-family: 'Roboto, sans-serif',
+  ),
+));
+
+html {
+  @include mat.all-component-themes($theme);
+}
+
+/* 晴雨表五層色彩系統 */
+:root {
+  --color-strong-bull: #F59E0B;
+  --color-bull: #22C55E;
+  --color-neutral: #9CA3AF;
+  --color-bear: #3B82F6;
+  --color-strong-bear: #4338CA;
+
+  --color-positive: #EF4444;
+  --color-negative: #22C55E;
+
+  --toolbar-bg: #1565C0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background-color: #f5f5f5;
+}
+
+/* Toolbar 全域覆寫 */
+.app-toolbar.mat-toolbar {
+  background-color: var(--toolbar-bg) !important;
+  color: white !important;
+
+  .mat-icon-button,
+  button[mat-icon-button] {
+    color: white !important;
+  }
+}

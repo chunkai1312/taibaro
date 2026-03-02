@@ -1,0 +1,178 @@
+.hero-card {
+  border-radius: 20px;
+  padding: 24px;
+  color: white;
+  transition: background-color 0.5s ease;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  mat-card-content {
+    padding: 0 !important;
+  }
+
+  .state-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 200px;
+
+    .state-icon {
+      font-size: 3rem;
+      width: 3rem;
+      height: 3rem;
+      opacity: 0.8;
+    }
+
+    .state-text {
+      margin: 0;
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+      gap: 16px;
+    }
+  }
+
+  .hero-left {
+    flex: 0 0 28%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 10px;
+    padding: 8px 24px 8px 0;
+
+    @media (max-width: 600px) {
+      flex: none;
+      padding: 0;
+      gap: 8px;
+    }
+
+    .left-date {
+      font-size: 1.15rem;
+      font-weight: 700;
+      opacity: 1;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .stat-block {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      opacity: 0.6;
+    }
+
+    .taiex-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .taiex-price {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+    }
+
+    .taiex-change {
+      display: flex;
+      align-items: center;
+      gap: 1px;
+      font-size: 0.82rem;
+      font-weight: 600;
+
+      .change-arrow {
+        font-size: 0.82rem;
+        width: 0.82rem;
+        height: 0.82rem;
+      }
+
+      &.up   { color: #fca5a5; }
+      &.down { color: #86efac; }
+    }
+
+    .trade-value {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .no-stats {
+      font-size: 1.5rem;
+      opacity: 0.5;
+    }
+  }
+
+  .hero-divider {
+    flex: 0 0 1px;
+    background: rgba(255, 255, 255, 0.3);
+    margin: 4px 0;
+
+    @media (max-width: 600px) {
+      display: none;
+    }
+  }
+
+  .hero-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    padding: 8px 0 8px 24px;
+
+    @media (max-width: 600px) {
+      padding: 0;
+    }
+  }
+
+  .hero-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    .weather-emoji {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .level-label {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .date-text {
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+  }
+
+  .summary-text {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.8;
+    opacity: 0.9;
+  }
+}

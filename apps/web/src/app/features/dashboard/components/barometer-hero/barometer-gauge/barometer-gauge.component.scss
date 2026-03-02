@@ -1,0 +1,62 @@
+.gauge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 100%;
+  padding: 12px 0;
+
+  .gauge-connector {
+    flex: 1;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.3);
+    max-width: 40px;
+  }
+
+  .gauge-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    opacity: 0.4;
+    transition: all 0.3s ease;
+    cursor: default;
+
+    .weather {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .label {
+      font-size: 0.65rem;
+      color: white;
+      white-space: nowrap;
+    }
+
+    &.active {
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(4px);
+      transform: scale(1.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+      .weather {
+        font-size: 2rem;
+      }
+
+      .label {
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+    }
+
+    // 個別等級顏色點綴（border）
+    &[data-level='STRONG_BULL'].active { border: 2px solid rgba(255,255,255,0.6); }
+    &[data-level='BULL'].active       { border: 2px solid rgba(255,255,255,0.6); }
+    &[data-level='NEUTRAL'].active    { border: 2px solid rgba(255,255,255,0.6); }
+    &[data-level='BEAR'].active       { border: 2px solid rgba(255,255,255,0.6); }
+    &[data-level='STRONG_BEAR'].active{ border: 2px solid rgba(255,255,255,0.6); }
+  }
+}

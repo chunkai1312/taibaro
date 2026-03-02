@@ -1,0 +1,11 @@
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.stats-empty {
+  color: #999;
+  text-align: center;
+  padding: 24px;
+}

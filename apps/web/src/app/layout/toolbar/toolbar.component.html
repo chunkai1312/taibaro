@@ -1,0 +1,49 @@
+<mat-toolbar class="app-toolbar">
+  <span class="title">🌡 台股晴雨表</span>
+
+  <span class="spacer"></span>
+
+  <!-- 日期導航 -->
+  <div class="date-nav">
+    <button mat-icon-button (click)="prevDay()" aria-label="前一日">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <!-- 日期顯示 + 點擊開啟 datepicker -->
+    <button class="date-display" (click)="picker.open()" mat-button>
+      <mat-icon class="cal-icon">calendar_today</mat-icon>
+      <span>{{ selectedDateStr() }}</span>
+
+      <!-- 隱藏的 datepicker 輸入 -->
+      <input
+        [matDatepicker]="picker"
+        [value]="selectedDateObj()"
+        [max]="maxDate"
+        (dateChange)="onDatePickerChange($event.value)"
+        style="display:none"
+      />
+      <mat-datepicker #picker></mat-datepicker>
+    </button>
+
+    <button
+      mat-icon-button
+      (click)="nextDay()"
+      [disabled]="isToday()"
+      aria-label="後一日"
+    >
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+  <!-- 時間範圍切換 -->
+  <div class="range-buttons">
+    @for (r of ranges; track r) {
+      <button
+        class="range-btn"
+        [class.active]="selectedRange() === r"
+        (click)="onRangeChange(r)"
+      >{{ r }}</button>
+    }
+  </div>
+</mat-toolbar>
+<!-- 提供 MatNativeDateModule 令 datepicker 正常運作 -->

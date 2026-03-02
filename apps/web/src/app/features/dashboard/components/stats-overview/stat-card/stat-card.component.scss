@@ -1,0 +1,33 @@
+.stat-card {
+  border-radius: 12px;
+
+  mat-card-content {
+    padding: 16px 20px 16px !important;
+  }
+
+  .label {
+    font-size: 0.78rem;
+    color: #666;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .value {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.1;
+
+    &.positive { color: var(--color-positive); }
+    &.negative { color: var(--color-negative); }
+
+    .unit {
+      font-size: 0.75rem;
+      color: #666;
+      margin-left: 2px;
+      font-weight: 400;
+    }
+  }
+}

@@ -1,0 +1,11 @@
+<mat-card class="stat-card">
+  <mat-card-content>
+    <div class="label">{{ label() }}</div>
+    <div class="value" [class.positive]="isPositive()" [class.negative]="isNegative()">
+      {{ formattedValue() }}
+      @if (unit()) {
+        <span class="unit">{{ unit() }}</span>
+      }
+    </div>
+  </mat-card-content>
+</mat-card>

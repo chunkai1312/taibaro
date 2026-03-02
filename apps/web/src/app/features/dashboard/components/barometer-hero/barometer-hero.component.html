@@ -1,0 +1,53 @@
+<mat-card class="hero-card" [style.background-color]="bgColor()">
+  @if (loading()) {
+    <div class="state-center">
+      <mat-spinner color="accent" diameter="48"></mat-spinner>
+      <p class="state-text">分析中...</p>
+    </div>
+  } @else if (error()) {
+    <div class="state-center">
+      <mat-icon class="state-icon">cloud_off</mat-icon>
+      <p class="state-text">{{ error() }}</p>
+    </div>
+  } @else if (data()) {
+    <mat-card-content class="hero-content">
+      <!-- 左側：日期 + 市場基本數據 -->
+      <div class="hero-left">
+        <div class="left-date">{{ data()!.date }}</div>
+        @if (todayStats(); as s) {
+          <div class="stat-block">
+            <div class="stat-label">加權指數</div>
+            <div class="taiex-row">
+              <span class="taiex-price">{{ s.taiexPrice | number:'1.2-2' }}</span>
+              <span class="taiex-change" [class.up]="taiexUp()" [class.down]="!taiexUp()">
+                <mat-icon class="change-arrow">{{ taiexUp() ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>{{ s.taiexChange | number:'1.2-2' }}
+              </span>
+            </div>
+          </div>
+          @if (tradeValueBillions(); as tv) {
+            <div class="stat-block">
+              <div class="stat-label">成交金額</div>
+              <div class="trade-value">{{ tv | number }} 億</div>
+            </div>
+          }
+        } @else {
+          <div class="no-stats">—</div>
+        }
+      </div>
+      <div class="hero-divider"></div>
+      <!-- 右側：等級標題 + 摘要 -->
+      <div class="hero-right">
+        <div class="hero-header">
+          <span class="weather-emoji">{{ data()!.weather }}</span>
+          <span class="level-label">{{ data()!.label }}</span>
+        </div>
+        <p class="summary-text">{{ data()!.summary }}</p>
+      </div>
+    </mat-card-content>
+  } @else {
+    <div class="state-center">
+      <mat-icon class="state-icon">event_busy</mat-icon>
+      <p class="state-text">此日期無市場資料</p>
+    </div>
+  }
+</mat-card>

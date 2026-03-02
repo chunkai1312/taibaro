@@ -1,0 +1,13 @@
+@if (option()) {
+  <div
+    echarts
+    [options]="option()!"
+    [style.height]="height()"
+    class="chart-container"
+  ></div>
+} @else {
+  <div class="chart-empty" [style.height]="height()">
+    <mat-icon>bar_chart</mat-icon>
+    <p>此期間無資料</p>
+  </div>
+}

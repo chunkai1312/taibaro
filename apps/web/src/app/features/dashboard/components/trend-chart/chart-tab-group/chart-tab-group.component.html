@@ -1,0 +1,30 @@
+<mat-card class="chart-card">
+  <mat-card-content>
+    <mat-tab-group>
+      @for (tab of tabs; track tab.label; let i = $index) {
+        <mat-tab [label]="tab.label">
+          <div class="tab-content">
+            <!-- 指標選擇 Chips（單一指標時隱藏） -->
+            @if (tab.indicators.length > 1) {
+              <mat-chip-listbox
+                class="indicator-chips"
+                [value]="selectedIndicatorIndex()[i]"
+                (change)="selectIndicator(i, $event.value)"
+                hideSingleSelectionIndicator
+              >
+                @for (ind of tab.indicators; track ind.key; let j = $index) {
+                  <mat-chip-option [value]="j">{{ ind.chipLabel ?? ind.label }}</mat-chip-option>
+                }
+              </mat-chip-listbox>
+            }
+
+            <!-- 圖表 -->
+            <app-indicator-chart
+              [option]="getChartOption(i)"
+            ></app-indicator-chart>
+          </div>
+        </mat-tab>
+      }
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

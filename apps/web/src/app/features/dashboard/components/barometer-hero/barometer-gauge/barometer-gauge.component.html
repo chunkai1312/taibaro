@@ -1,0 +1,11 @@
+<div class="gauge">
+  @for (step of steps(); track step.level) {
+    <div class="gauge-step" [class.active]="step.active" [attr.data-level]="step.level">
+      <span class="weather">{{ step.weather }}</span>
+      <span class="label">{{ step.label }}</span>
+    </div>
+    @if (!$last) {
+      <div class="gauge-connector"></div>
+    }
+  }
+</div>
