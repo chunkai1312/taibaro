@@ -4,6 +4,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DateTime } from 'luxon';
 import { MarketDataModule } from './marketdata/marketdata.module';
+import { BarometerModule } from './barometer/barometer.module';
 import { MarketStatsService } from './marketdata/services/market-stats.service';
 import { TickerService } from './marketdata/services/ticker.service';
 
@@ -13,6 +14,7 @@ import { TickerService } from './marketdata/services/ticker.service';
     ScheduleModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     MarketDataModule,
+    BarometerModule,
   ]
 })
 export class AppModule implements OnApplicationBootstrap {
@@ -25,9 +27,8 @@ export class AppModule implements OnApplicationBootstrap {
     if (process.env.MARKETDATA_INIT_ENABLED === 'true') {
       Logger.log('正在初始化應用程式...', AppModule.name);
 
-      // const days = parseInt(process.env.MARKETDATA_INIT_DAYS, 10) || 30;
-      // const startDate = DateTime.local().minus({ days });
-      const startDate = DateTime.fromFormat('2025-01-01', 'yyyy-MM-dd');
+      const days = parseInt(process.env.MARKETDATA_INIT_DAYS, 10) || 30;
+      const startDate = DateTime.local().minus({ days });
       const endDate = DateTime.local();
 
       for (let dt = startDate; dt <= endDate; dt = dt.plus({ day: 1 })) {

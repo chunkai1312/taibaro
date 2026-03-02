@@ -35,7 +35,7 @@ export class MarketStatsRepository {
     ]);
 
     const all = prevRecord ? [...rangeResults, prevRecord] : rangeResults;
-    return this.computeChanges(all).slice(0, rangeResults.length);
+    return this.computeChanges(all).slice(0, rangeResults.length).reverse();
   }
 
   private computeChanges(results: MarketStats[]) {
@@ -51,6 +51,12 @@ export class MarketStatsRepository {
         && doc.finiTxoCallsNetOiValue - next.finiTxoCallsNetOiValue;
       data.finiTxoPutsNetOiValueChange = has('finiTxoPutsNetOiValue')
         && doc.finiTxoPutsNetOiValue - next.finiTxoPutsNetOiValue;
+      data.finiTxoNetOiValue = doc.finiTxoCallsNetOiValue != null && doc.finiTxoPutsNetOiValue != null
+        ? doc.finiTxoCallsNetOiValue - doc.finiTxoPutsNetOiValue
+        : null;
+      data.finiTxoNetOiValueChange = has('finiTxoCallsNetOiValue') && has('finiTxoPutsNetOiValue') && next
+        ? (doc.finiTxoCallsNetOiValue - doc.finiTxoPutsNetOiValue) - (next.finiTxoCallsNetOiValue - next.finiTxoPutsNetOiValue)
+        : null;
       data.topTenSpecificFrontMonthTxfNetOiChange = has('topTenSpecificFrontMonthTxfNetOi')
         && doc.topTenSpecificFrontMonthTxfNetOi - next.topTenSpecificFrontMonthTxfNetOi;
       data.topTenSpecificBackMonthsTxfNetOiChange = has('topTenSpecificBackMonthsTxfNetOi')

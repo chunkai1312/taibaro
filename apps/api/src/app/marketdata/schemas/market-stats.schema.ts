@@ -137,6 +137,17 @@ export class MarketStats {
    */
   @Prop()
   usdtwd: number;
+
+  /**
+   * AI 晴雨表分析結果（LLM 生成，快取用）
+   */
+  @Prop({ type: Object })
+  aiAnalysis: {
+    level: string;
+    weather: string;
+    label: string;
+    summary: string;
+  };
 }
 
 export const MarketStatsSchema = SchemaFactory.createForClass(MarketStats)
