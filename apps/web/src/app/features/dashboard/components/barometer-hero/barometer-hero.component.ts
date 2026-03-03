@@ -1,8 +1,10 @@
 import { Component, input, computed } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
+import { DateTime } from 'luxon';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
 import {
   BarometerResult,
   BAROMETER_COLOR,
@@ -18,6 +20,7 @@ import { MarketStats } from '../../../../core/models/market-stats.model';
     MatCardModule,
     MatProgressSpinnerModule,
     MatIconModule,
+    MatChipsModule,
   ],
   templateUrl: './barometer-hero.component.html',
   styleUrl: './barometer-hero.component.scss',
@@ -28,9 +31,16 @@ export class BarometerHeroComponent {
   loading = input<boolean>(false);
   error = input<string | null>(null);
 
-  readonly bgColor = computed(() => {
+  readonly formattedDate = computed(() => {
     const d = this.data();
-    return d ? BAROMETER_COLOR[d.level] : '#9CA3AF';
+    if (!d) return '';
+    const dt = DateTime.fromISO(d.date);
+    return `${dt.year} 年 ${dt.month} 月 ${dt.day} 日`;
+  });
+
+  readonly accentColor = computed(() => {
+    const d = this.data();
+    return d ? BAROMETER_COLOR[d.level] : 'var(--color-neutral)';
   });
 
   readonly taiexUp = computed(() => (this.todayStats()?.taiexChange ?? 0) >= 0);

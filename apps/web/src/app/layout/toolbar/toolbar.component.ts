@@ -11,6 +11,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { DateTime } from 'luxon';
 import { DashboardStateService, TimeRange } from '../../core/services/dashboard-state.service';
+import { ThemeService } from '../../core/services/theme.service';
 
 export type { TimeRange };
 
@@ -31,6 +32,8 @@ export type { TimeRange };
 })
 export class ToolbarComponent {
   private state = inject(DashboardStateService);
+  readonly themeService = inject(ThemeService);
+  readonly isDark = this.themeService.isDark;
 
   readonly ranges: TimeRange[] = ['1M', '3M', '6M'];
 

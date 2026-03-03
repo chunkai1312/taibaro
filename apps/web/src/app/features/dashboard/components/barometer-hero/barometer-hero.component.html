@@ -1,4 +1,4 @@
-<mat-card class="hero-card" [style.background-color]="bgColor()">
+<mat-card class="hero-card" [style.--hero-accent]="accentColor()">
   @if (loading()) {
     <div class="state-center">
       <mat-spinner color="accent" diameter="48"></mat-spinner>
@@ -13,12 +13,12 @@
     <mat-card-content class="hero-content">
       <!-- 左側：日期 + 市場基本數據 -->
       <div class="hero-left">
-        <div class="left-date">{{ data()!.date }}</div>
+        <div class="left-date">{{ formattedDate() }}</div>
         @if (todayStats(); as s) {
           <div class="stat-block">
             <div class="stat-label">加權指數</div>
             <div class="taiex-row">
-              <span class="taiex-price">{{ s.taiexPrice | number:'1.2-2' }}</span>
+              <span class="taiex-price" [class.up]="taiexUp()" [class.down]="!taiexUp()">{{ s.taiexPrice | number:'1.2-2' }}</span>
               <span class="taiex-change" [class.up]="taiexUp()" [class.down]="!taiexUp()">
                 <mat-icon class="change-arrow">{{ taiexUp() ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>{{ s.taiexChange | number:'1.2-2' }}
               </span>
@@ -39,7 +39,9 @@
       <div class="hero-right">
         <div class="hero-header">
           <span class="weather-emoji">{{ data()!.weather }}</span>
-          <span class="level-label">{{ data()!.label }}</span>
+          <mat-chip-set>
+            <mat-chip class="level-chip" disableRipple>{{ data()!.label }}</mat-chip>
+          </mat-chip-set>
         </div>
         <p class="summary-text">{{ data()!.summary }}</p>
       </div>

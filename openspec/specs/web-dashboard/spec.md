@@ -31,15 +31,19 @@
 ---
 
 ### Requirement: 晴雨表 Hero Card
-系統 SHALL 顯示當日晴雨分析結果，採左右分欄佈局：左側顯示日期與大盤基本數據，右側顯示天氣圖示（大字）、中文等級標籤及 AI 生成的盤勢摘要文字。
+系統 SHALL 顯示當日晴雨分析結果，採左右分欄佈局：左側顯示日期與大盤基本數據，右側顯示天氣圖示（大字）、以 MatChip 呈現的中文等級標籤及 AI 生成的盤勢摘要文字。Hero Card 使用統一的表面色背景（`var(--bg-surface)`），以左側 `4px` 等級色 accent border 區分盤勢，淺色與深色模式採相同視覺語言。
 
 #### Scenario: 成功載入晴雨資料
 - **WHEN** `GET /marketdata/barometer?date=<date>` 回傳成功
-- **THEN** 系統 SHALL 於左側顯示日期、加權指數（含漲跌）及成交金額，右側顯示天氣圖示、等級標籤及 AI 摘要文字，且 Hero Card 背景色 SHALL 對應晴雨等級色彩
+- **THEN** 系統 SHALL 於左側顯示日期、加權指數（含漲跌）及成交金額，右側顯示天氣圖示、以 MatChip 呈現的等級標籤及 AI 摘要文字，Hero Card 左側 SHALL 有 `4px solid var(--color-<level>)` 的 accent border
 
-#### Scenario: 晴雨等級色彩映射
+#### Scenario: 晴雨等級 Accent Border 色彩映射
 - **WHEN** 系統載入晴雨資料
-- **THEN** Hero Card 背景色 SHALL 依等級套用：STRONG_BULL=#F59E0B / BULL=#22C55E / NEUTRAL=#9CA3AF / BEAR=#3B82F6 / STRONG_BEAR=#4338CA
+- **THEN** Hero Card 左側 accent border 色彩 SHALL 依等級套用對應的 CSS token：STRONG_BULL=`var(--color-strong-bull)` / BULL=`var(--color-bull)` / NEUTRAL=`var(--color-neutral)` / BEAR=`var(--color-bear)` / STRONG_BEAR=`var(--color-strong-bear)`
+
+#### Scenario: 晴雨等級 Chip 顯示
+- **WHEN** 系統載入晴雨資料
+- **THEN** 系統 SHALL 以 MatChip 顯示盤勢中文標籤（強多/偏多/中性/偏空/強空），chip 背景色 SHALL 為對應等級色彩的 15% opacity
 
 #### Scenario: 假日或無資料日期
 - **WHEN** `GET /marketdata/barometer` 回傳 HTTP 404

@@ -35,15 +35,13 @@ export const TAB_DEFINITIONS: TabDef[] = [
     label: '期貨籌碼',
     indicators: [
       { key: 'finiTxfNetOi',                    label: '外資台指淨未平倉', unit: '口', chartType: 'bar' },
+      { key: 'retailMxfNetOi',                  label: '散戶小台淨未平倉',  unit: '口', chartType: 'bar' },
+      { key: 'retailTmfNetOi',                  label: '散戶微台淨未平倉',  unit: '口', chartType: 'bar' },
       { key: 'topTenSpecificFrontMonthTxfNetOi', label: '近月台指淨未平倉', chipLabel: '大額交易人台指淨未平倉', unit: '口', chartType: 'bar', fixedColor: '#3B82F6',
         companions: [
           { key: 'topTenSpecificBackMonthsTxfNetOi', label: '遠月台指淨未平倉', unit: '口', chartType: 'bar', fixedColor: '#8B5CF6' },
         ],
       },
-      { key: 'retailMxfNetOi',                  label: '散戶小台淨未平倉',  unit: '口', chartType: 'bar' },
-      { key: 'retailMxfLongShortRatio',         label: '散戶小台多空比', unit: '',   chartType: 'bar', hasReferenceLine: true },
-      { key: 'retailTmfNetOi',                  label: '散戶微台淨未平倉',  unit: '口', chartType: 'bar' },
-      { key: 'retailTmfLongShortRatio',         label: '散戶微台多空比', unit: '',   chartType: 'bar', hasReferenceLine: true },
     ],
   },
   {
@@ -52,7 +50,7 @@ export const TAB_DEFINITIONS: TabDef[] = [
       { key: 'finiTxoNetOiValue',         label: '外資台指選擇權淨未平倉',   unit: '億元', chartType: 'bar' },
       { key: 'finiTxoCallsNetOiValue',    label: '外資台指買權淨未平倉',  unit: '億元', chartType: 'bar' },
       { key: 'finiTxoPutsNetOiValue',     label: '外資台指賣權淨未平倉',   unit: '億元', chartType: 'bar' },
-      { key: 'txoPutCallRatio',          label: '台指選擇權 P/C Ratio',        unit: '',    chartType: 'bar', hasReferenceLine: true },
+      { key: 'txoPutCallRatio',          label: '台指選擇權 P/C Ratio',        unit: '%',    chartType: 'bar', hasReferenceLine: true, fixedColor: '#3B82F6' },
     ],
   },
   {
@@ -73,6 +71,7 @@ const SCALE_MAP: Partial<Record<keyof MarketStats, number>> = {
   finiTxoCallsNetOiValue: 1e5,
   finiTxoPutsNetOiValue: 1e5,
   finiTxoNetOiValue: 1e5,
+  txoPutCallRatio: 0.01,           // 小數 → %（× 100）
 };
 
 function scaleValue(key: keyof MarketStats, v: number): number {
@@ -180,10 +179,7 @@ export function buildChartOption(
         scale: allIndicators.some((ind) => ind.scaleAxis),
         splitLine: { show: false },
         axisLabel: {
-          formatter: (v: number) => {
-            const prefix = v > 0 ? '+' : '';
-            return `${prefix}${v.toLocaleString('zh-TW')}`;
-          },
+          formatter: (v: number) => v.toLocaleString('zh-TW'),
         },
       },
     ],

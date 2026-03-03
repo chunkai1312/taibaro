@@ -1,8 +1,9 @@
-import { Component, input } from '@angular/core';
+import { Component, input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxEchartsDirective } from 'ngx-echarts';
 import type { EChartsOption } from 'echarts';
 import { MatIconModule } from '@angular/material/icon';
+import { ThemeService } from '../../../../../core/services/theme.service';
 
 @Component({
   selector: 'app-indicator-chart',
@@ -14,4 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class IndicatorChartComponent {
   option = input<EChartsOption | null>(null);
   height = input<string>('360px');
+
+  readonly themeService = inject(ThemeService);
+  readonly isDark = this.themeService.isDark;
 }

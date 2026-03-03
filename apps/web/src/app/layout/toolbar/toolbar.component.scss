@@ -1,9 +1,10 @@
 .app-toolbar {
-  background-color: #1565C0 !important;
+  background-color: var(--toolbar-bg) !important;
   color: white !important;
   position: sticky;
   top: 0;
   z-index: 100;
+  border-bottom: 1px solid transparent;
   gap: 8px;
   padding: 0 16px;
 

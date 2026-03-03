@@ -45,5 +45,10 @@
       >{{ r }}</button>
     }
   </div>
+
+  <!-- 主題切換 -->
+  <button mat-icon-button (click)="themeService.toggle()" [attr.aria-label]="isDark() ? '切換淺色模式' : '切換深色模式'">
+    <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
 </mat-toolbar>
 <!-- 提供 MatNativeDateModule 令 datepicker 正常運作 -->

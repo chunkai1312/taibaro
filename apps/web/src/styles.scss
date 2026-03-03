@@ -2,7 +2,7 @@
 
 @include mat.core();
 
-$theme: mat.define-theme((
+$light-theme: mat.define-theme((
   color: (
     theme-type: light,
     primary: mat.$azure-palette,
@@ -13,22 +13,82 @@ $theme: mat.define-theme((
   ),
 ));
 
+$dark-theme: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: mat.$azure-palette,
+  ),
+  typography: (
+    brand-family: 'Roboto, sans-serif',
+    plain-family: 'Roboto, sans-serif',
+  ),
+));
+
 html {
-  @include mat.all-component-themes($theme);
+  @include mat.all-component-themes($light-theme);
 }
 
-/* 晴雨表五層色彩系統 */
+html.dark-mode {
+  @include mat.all-component-themes($dark-theme);
+}
+
+/* CSS Custom Property Token 系統 */
 :root {
-  --color-strong-bull: #F59E0B;
-  --color-bull: #22C55E;
-  --color-neutral: #9CA3AF;
-  --color-bear: #3B82F6;
-  --color-strong-bear: #4338CA;
+  /* 背景層 */
+  --bg-page:             #F5F5F5;
+  --bg-surface:          #FFFFFF;
+  --bg-surface-elevated: #FAFAFA;
 
-  --color-positive: #EF4444;
-  --color-negative: #22C55E;
+  /* 邊框 */
+  --border-color:        #E0E0E0;
 
-  --toolbar-bg: #1565C0;
+  /* 文字 */
+  --text-primary:        #1A1A1A;
+  --text-secondary:      #666666;
+
+  /* Layout */
+  --toolbar-bg:          #1565C0;
+  --section-accent:      #3B82F6;
+
+  /* 晴雨表五層色彩 */
+  --color-strong-bull:   #F59E0B;
+  --color-bull:          #22C55E;
+  --color-neutral:       #9CA3AF;
+  --color-bear:          #3B82F6;
+  --color-strong-bear:   #4338CA;
+
+  /* 漲跌色（台灣慣例：漲紅跌綠） */
+  --color-positive:      #EF4444;
+  --color-negative:      #22C55E;
+}
+
+html.dark-mode {
+  /* 背景層 */
+  --bg-page:             #131722;
+  --bg-surface:          #1E222D;
+  --bg-surface-elevated: #2A2E39;
+
+  /* 邊框 */
+  --border-color:        #363A45;
+
+  /* 文字 */
+  --text-primary:        #D1D4DC;
+  --text-secondary:      #9598A1;
+
+  /* Layout */
+  --toolbar-bg:          #1E222D;
+  --section-accent:      #60A5FA;
+
+  /* 晴雨表五層色彩（深色模式提亮） */
+  --color-strong-bull:   #FBBF24;
+  --color-bull:          #4ADE80;
+  --color-neutral:       #9CA3AF;
+  --color-bear:          #60A5FA;
+  --color-strong-bear:   #818CF8;
+
+  /* 漲跌色（深色模式提亮） */
+  --color-positive:      #F87171;
+  --color-negative:      #4ADE80;
 }
 
 * {
@@ -38,7 +98,16 @@ html {
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
-  background-color: #f5f5f5;
+  background-color: var(--bg-page);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 /* Toolbar 全域覆寫 */
@@ -50,4 +119,25 @@ body {
   button[mat-icon-button] {
     color: white !important;
   }
+}
+
+html.dark-mode .app-toolbar.mat-toolbar {
+  border-bottom-color: var(--border-color) !important;
+}
+
+/* 所有 mat-card 背景統一使用 token（light & dark） */
+mat-card,
+.mat-mdc-card {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+}
+
+/* 深色模式：天氣 emoji 轉為灰白以提高可見度 */
+html.dark-mode .weather-emoji {
+  filter: grayscale(1) brightness(2.5);
+}
+
+/* 深色模式：確保 hero-card 的 mat-card 文字顏色正確繼承 token */
+html.dark-mode .hero-card {
+  color: var(--text-primary) !important;
 }
