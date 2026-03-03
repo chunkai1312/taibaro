@@ -6,7 +6,7 @@ import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { MarketStatsRepository } from '../marketdata/repositories/market-stats.repository';
 import { BAROMETER_LABEL, BAROMETER_WEATHER, BarometerLevel, BarometerResult } from './barometer.types';
 import { BarometerOutputSchema } from './barometer.schema';
-import { SYSTEM_PROMPT, buildUserMessage } from './barometer.prompt';
+import { SYSTEM_PROMPT, buildUserMessage, TechContext } from './barometer.prompt';
 
 @Injectable()
 export class BarometerService {
@@ -39,13 +39,15 @@ export class BarometerService {
       };
     }
 
-    // 3. 取前一交易日資料（用於趨勢對比）
-    const prevDateStr = DateTime.fromISO(date).minus({ days: 7 }).toISODate();
+    // 3. 取前一交易日資料（用於趨勢對比）及歷史資料（用於計算技術指標）
+    const prevDateStr = DateTime.fromISO(date).minus({ days: 30 }).toISODate();
     const recentStats = await this.marketStatsRepository.getMarketStats({
       startDate: prevDateStr,
       endDate: date,
     });
     const prevStats = recentStats.find(s => s.date < date) ?? null;
+    const historicalStats = recentStats.filter(s => s.date < date);
+    const techContext = this.computeTechContext(historicalStats, todayStats);
 
     // 4. 呼叫 LLM
     try {
@@ -56,7 +58,7 @@ export class BarometerService {
 
       const result = await model.invoke([
         new SystemMessage(SYSTEM_PROMPT),
-        new HumanMessage(buildUserMessage(todayStats, prevStats)),
+        new HumanMessage(buildUserMessage(todayStats, prevStats, techContext)),
       ]);
 
       const level = result.level as BarometerLevel;
@@ -76,6 +78,24 @@ export class BarometerService {
       this.logger.error(`${date} 晴雨表：LLM 呼叫失敗`, error?.message);
       throw new ServiceUnavailableException('晴雨表分析服務暫時無法使用，請稍後再試');
     }
+  }
+
+  private computeTechContext(historicalStats: Record<string, any>[], todayStats: Record<string, any>): TechContext {
+    const sorted = [...historicalStats].sort((a, b) => b.date.localeCompare(a.date));
+    const prices = [todayStats.taiexPrice, ...sorted.map(s => s.taiexPrice)].filter((p): p is number => p != null);
+    const volumes = [todayStats.taiexTradeValue, ...sorted.map(s => s.taiexTradeValue)].filter((v): v is number => v != null);
+
+    const avg = (arr: number[]) => arr.reduce((sum, v) => sum + v, 0) / arr.length;
+
+    const taiex5MA = prices.length >= 5 ? Math.round(avg(prices.slice(0, 5))) : null;
+    const taiex20MA = prices.length >= 20 ? Math.round(avg(prices.slice(0, 20))) : null;
+    const tradeValue5MA = volumes.length >= 5 ? Math.round(avg(volumes.slice(0, 5))) : null;
+    const volumeRatio =
+      tradeValue5MA != null && todayStats.taiexTradeValue != null
+        ? Math.round((todayStats.taiexTradeValue / tradeValue5MA) * 100) / 100
+        : null;
+
+    return { taiex5MA, taiex20MA, tradeValue5MA, volumeRatio };
   }
 
   @Cron('0 0 17 * * *')

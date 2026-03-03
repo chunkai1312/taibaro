@@ -59,8 +59,8 @@ export class MarketStatsService {
       })
       .then(data => data && this.marketStatsRepository.updateMarketStats(data));
 
-    if (updated) Logger.log(`${date} 集中市場加權指數: 已更新`, MarketStatsService.name);
-    else Logger.warn(`${date} 集中市場加權指數: 尚無資料或非交易日`, MarketStatsService.name);
+    if (updated) Logger.log(`${date} 集中市場成交金額: 已更新`, MarketStatsService.name);
+    else Logger.warn(`${date} 集中市場成交金額: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
   @Cron('0 30 15 * * *')
@@ -168,7 +168,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 散戶微台淨部位: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('20 0 15 * * *')
+  @Cron('25 0 15 * * *')
   async updateTxoPutCallRatio(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.futopt.txoPutCallRatio({ date })
       .then(data => data && {
