@@ -2,7 +2,11 @@
   "name": "@twstock-barometer/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "serve": "nx run-many --target=serve --all",
+    "build": "nx run-many --target=build --all",
+    "build:docker": "npm run build && docker build -t chunkai1312/twstock-barometer --platform linux/amd64 ."
+  },
   "private": true,
   "dependencies": {
     "@angular/cdk": "~21.1.0",
@@ -21,6 +25,7 @@
     "@nestjs/mongoose": "^11.0.4",
     "@nestjs/platform-express": "^11.0.0",
     "@nestjs/schedule": "^6.1.1",
+    "@nestjs/serve-static": "^5.0.4",
     "@nestjs/swagger": "^11.2.6",
     "axios": "^1.6.0",
     "class-transformer": "^0.5.1",

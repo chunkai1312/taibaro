@@ -1,6 +1,8 @@
+import * as path from 'path';
 import { Module, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DateTime } from 'luxon';
 import { MarketDataModule } from './marketdata/marketdata.module';
@@ -12,6 +14,9 @@ import { TickerService } from './marketdata/services/ticker.service';
   imports: [
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),
+    ServeStaticModule.forRoot({
+      rootPath: path.join(__dirname, 'assets'),
+    }),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     MarketDataModule,
     BarometerModule,
