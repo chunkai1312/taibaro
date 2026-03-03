@@ -5,13 +5,13 @@ ENV PORT=3000
 
 WORKDIR /app
 
-RUN addgroup --system twstock-barometer && \
-  adduser --system -G twstock-barometer twstock-barometer
+RUN addgroup --system barotw && \
+  adduser --system -G barotw barotw
 
-COPY dist/apps/api twstock-barometer/
-COPY dist/apps/web/browser twstock-barometer/assets/
-RUN chown -R twstock-barometer:twstock-barometer .
+COPY dist/apps/api barotw/
+COPY dist/apps/web/browser barotw/assets/
+RUN chown -R barotw:barotw .
 
-RUN npm --prefix twstock-barometer --omit=dev -f install
+RUN npm --prefix barotw --omit=dev -f install
 
-CMD [ "node", "twstock-barometer" ]
+CMD [ "node", "barotw" ]

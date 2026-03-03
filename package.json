@@ -1,11 +1,11 @@
 {
-  "name": "@twstock-barometer/source",
+  "name": "@barotw/source",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "serve": "nx run-many --target=serve --all",
     "build": "nx run-many --target=build --all",
-    "build:docker": "npm run build && docker build -t chunkai1312/twstock-barometer --platform linux/amd64 ."
+    "build:docker": "npm run build && docker build -t chunkai1312/barotw --platform linux/amd64 ."
   },
   "private": true,
   "dependencies": {
