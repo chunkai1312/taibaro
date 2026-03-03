@@ -9,7 +9,7 @@ import { GetBarometerDto } from './dto/get-barometer.dto';
 export class BarometerController {
   constructor(private readonly barometerService: BarometerService) {}
 
-  @ApiOperation({ summary: '取得每日台股晴雨表分析' })
+  @ApiOperation({ summary: '取得每日 BaroTW 分析' })
   @Get('barometer')
   getBarometer(@Query() query: GetBarometerDto) {
     const date = query.date ?? DateTime.local().toISODate();
