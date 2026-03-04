@@ -36,7 +36,7 @@ export class MarketStatsService {
     Logger.log(`${date} 大盤籌碼已更新`, MarketStatsService.name);
   }
 
-  @Cron('0 0 15 * * *')
+  @Cron('0 0 15-18 * * *')
   async updateTaiex(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.indices.historical({ date, exchange: 'TWSE', symbol: 'IX0001' })
       .then((data: any) => data && {
@@ -50,7 +50,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 集中市場加權指數: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('0 15 15 * * *')
+  @Cron('0 15 15-18 * * *')
   async updateMarketTrades(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.market.trades({ date, exchange: 'TWSE' })
       .then(data => data && {
@@ -63,7 +63,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 集中市場成交金額: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('0 30 15 * * *')
+  @Cron('0 30 15-18 * * *')
   async updateInstInvestorsTrades(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.market.institutional({ date, exchange: 'TWSE' })
       .then(data => data && {
@@ -78,7 +78,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 集中市場三大法人買賣超: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('0 30 21 * * *')
+  @Cron('0 30 21-22 * * *')
   async updateMarginTransactions(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.market.marginTrades({ date, exchange: 'TWSE' })
       .then(data => data && {
@@ -94,7 +94,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 集中市場信用交易: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('0 0 15 * * *')
+  @Cron('0 0 15-18 * * *')
   async updateFiniTxfNetOi(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.futopt.institutional({ date, symbol: 'TXF' })
       .then(data => data && {
@@ -107,7 +107,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 外資臺股期貨未平倉淨口數: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('5 0 15 * * *')
+  @Cron('5 0 15-18 * * *')
   async updateFiniTxoNetOiValue(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.futopt.institutional({ date, symbol: 'TXO' })
       .then((data: any) => data && {
@@ -121,7 +121,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 外資臺指選擇權未平倉淨金額: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('10 0 15 * * *')
+  @Cron('10 0 15-18 * * *')
   async updateLargeTradersTxfNetOi(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.futopt.largeTraders({ date, symbol: 'TXF' })
       .then(data => {
@@ -140,7 +140,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 十大特法臺股期貨未平倉淨口數: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('15 0 15 * * *')
+  @Cron('15 0 15-18 * * *')
   async updateRetailMxfPosition(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.futopt.mxfRetailPosition({ date })
       .then(data => data && {
@@ -154,7 +154,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 散戶小台淨部位: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('20 0 15 * * *')
+  @Cron('20 0 15-18 * * *')
   async updateRetailTmfPosition(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.futopt.tmfRetailPosition({ date })
       .then(data => data && {
@@ -168,7 +168,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 散戶微台淨部位: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('25 0 15 * * *')
+  @Cron('25 0 15-18 * * *')
   async updateTxoPutCallRatio(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.futopt.txoPutCallRatio({ date })
       .then(data => data && {
@@ -181,7 +181,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 臺指選擇權 Put/Call Ratio: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('0 0 17 * * *')
+  @Cron('0 0 17-18 * * *')
   async updateUsdTwdRate(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.futopt.exchangeRates({ date })
       .then(data => data && {
