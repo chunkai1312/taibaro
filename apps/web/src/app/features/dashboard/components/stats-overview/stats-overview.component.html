@@ -5,7 +5,7 @@
       [value]="s.finiNetBuySell ? +(s.finiNetBuySell / 1e8).toFixed(1) : null"
       [change]="s.finiNetBuySell ? +(s.finiNetBuySell / 1e8).toFixed(1) : null"
       unit="億"
-      [decimals]="1"
+      [decimals]="2"
     ></app-stat-card>
 
     <app-stat-card
@@ -13,7 +13,7 @@
       [value]="s.sitcNetBuySell ? +(s.sitcNetBuySell / 1e8).toFixed(1) : null"
       [change]="s.sitcNetBuySell ? +(s.sitcNetBuySell / 1e8).toFixed(1) : null"
       unit="億"
-      [decimals]="1"
+      [decimals]="2"
     ></app-stat-card>
 
     <app-stat-card
@@ -21,7 +21,7 @@
       [value]="s.dealersNetBuySell ? +(s.dealersNetBuySell / 1e8).toFixed(1) : null"
       [change]="s.dealersNetBuySell ? +(s.dealersNetBuySell / 1e8).toFixed(1) : null"
       unit="億"
-      [decimals]="1"
+      [decimals]="2"
     ></app-stat-card>
 
     <app-stat-card
@@ -33,10 +33,10 @@
 
     <app-stat-card
       label="外資選擇權淨未平倉"
-      [value]="s.finiTxoNetOiValue ? +(s.finiTxoNetOiValue / 1e5).toFixed(0) : null"
-      [change]="s.finiTxoNetOiValue ? +(s.finiTxoNetOiValue / 1e5).toFixed(1) : null"
+      [value]="s.finiTxoNetOiValue ? +(s.finiTxoNetOiValue / 1e5).toFixed(2) : null"
+      [change]="s.finiTxoNetOiValue ? +(s.finiTxoNetOiValue / 1e5).toFixed(2) : null"
       unit="億"
-      [decimals]="1"
+      [decimals]="2"
     ></app-stat-card>
 
     <app-stat-card
