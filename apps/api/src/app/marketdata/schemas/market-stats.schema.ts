@@ -31,6 +31,36 @@ export class MarketStats {
   taiexTradeValue: number;
 
   /**
+   * 集中市場上漲家數
+   */
+  @Prop()
+  advanceCount: number;
+
+  /**
+   * 集中市場漲停家數
+   */
+  @Prop()
+  limitUpCount: number;
+
+  /**
+   * 集中市場下跌家數
+   */
+  @Prop()
+  declineCount: number;
+
+  /**
+   * 集中市場跌停家數
+   */
+  @Prop()
+  limitDownCount: number;
+
+  /**
+   * 集中市場平盤家數
+   */
+  @Prop()
+  unchangedCount: number;
+
+  /**
    * 外資買賣超
    */
   @Prop()

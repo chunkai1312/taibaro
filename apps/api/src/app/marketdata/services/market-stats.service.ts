@@ -17,6 +17,7 @@ export class MarketStatsService {
     const updates = [
       this.updateTaiex,
       this.updateMarketTrades,
+      this.updateMarketBreadth,
       this.updateInstInvestorsTrades,
       this.updateMarginTransactions,
       this.updateFiniTxfNetOi,
@@ -50,7 +51,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 集中市場加權指數: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('0 15 15-18 * * *')
+  @Cron('0 10 15-18 * * *')
   async updateMarketTrades(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.market.trades({ date, exchange: 'TWSE' })
       .then(data => data && {
@@ -61,6 +62,23 @@ export class MarketStatsService {
 
     if (updated) Logger.log(`${date} 集中市場成交金額: 已更新`, MarketStatsService.name);
     else Logger.warn(`${date} 集中市場成交金額: 尚無資料或非交易日`, MarketStatsService.name);
+  }
+
+  @Cron('0 20 15-18 * * *')
+  async updateMarketBreadth(date: string = DateTime.local().toISODate()) {
+    const updated = await this.twstock.market.breadth({ date, exchange: 'TWSE' })
+      .then(data => data && {
+        date: data.date,
+        advanceCount: data.up,
+        limitUpCount: data.limitUp,
+        declineCount: data.down,
+        limitDownCount: data.limitDown,
+        unchangedCount: data.unchanged,
+      })
+      .then(data => data && this.marketStatsRepository.updateMarketStats(data));
+
+    if (updated) Logger.log(`${date} 集中市場上漲下跌家數: 已更新`, MarketStatsService.name);
+    else Logger.warn(`${date} 集中市場上漲下跌家數: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
   @Cron('0 30 15-18 * * *')
