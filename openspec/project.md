@@ -1,8 +1,8 @@
-# TwStock Barometer — Project Context
+# TaiBaro — Project Context
 
 ## Overview
 
-TwStock Barometer 是一個台股大盤籌碼分析平台。後端每日自動從台股交易所（TWSE）收集 11 項大盤籌碼指標，並透過 LLM（GPT-4o-mini）解讀指標間的交互關係，輸出每日「晴雨等級」（五層）與盤勢摘要。前端以儀表板形式呈現晴雨表結果、籌碼速覽與趨勢圖表。
+TaiBaro 是一個台股大盤籌碼分析平台。後端每日自動從台股交易所（TWSE）收集 11 項大盤籌碼指標，並透過 LLM（GPT-4o-mini）解讀指標間的交互關係，輸出每日「晴雨等級」（五層）與盤勢摘要。前端以儀表板形式呈現晴雨表結果、籌碼速覽與趨勢圖表。
 
 ## Monorepo Structure
 

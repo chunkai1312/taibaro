@@ -8,6 +8,12 @@
   gap: 8px;
   padding: 0 16px;
 
+  .logo {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
   .title {
     font-size: 1.1rem;
     font-weight: 600;
