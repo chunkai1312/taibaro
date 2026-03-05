@@ -30,6 +30,11 @@
               <div class="trade-value">{{ tv | number }} 億</div>
             </div>
           }
+          <app-breadth-bar
+            [advanceCount]="todayStats()?.advanceCount"
+            [unchangedCount]="todayStats()?.unchangedCount"
+            [declineCount]="todayStats()?.declineCount"
+          ></app-breadth-bar>
         } @else {
           <div class="no-stats">—</div>
         }

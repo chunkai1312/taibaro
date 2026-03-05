@@ -1,0 +1,13 @@
+@if (hasData()) {
+  <div class="breadth-wrap">
+    <div class="breadth-labels">
+      <span class="label-advance">上漲 {{ advancePct() }}% ({{ advanceCount() }})</span>
+      <span class="label-decline">({{ declineCount() }}) {{ declinePct() }}% 下跌</span>
+    </div>
+    <div class="breadth-bar">
+      <div class="bar-advance" [style.width]="advancePct() + '%'"></div>
+      <div class="bar-unchanged" [style.width]="unchangedPct() + '%'"></div>
+      <div class="bar-decline" [style.width]="declinePct() + '%'"></div>
+    </div>
+  </div>
+}

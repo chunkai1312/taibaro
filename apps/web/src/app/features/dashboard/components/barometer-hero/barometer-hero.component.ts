@@ -10,6 +10,7 @@ import {
   BAROMETER_COLOR,
 } from '../../../../core/models/barometer.model';
 import { MarketStats } from '../../../../core/models/market-stats.model';
+import { BreadthBarComponent } from './breadth-bar/breadth-bar.component';
 
 @Component({
   selector: 'app-barometer-hero',
@@ -21,6 +22,7 @@ import { MarketStats } from '../../../../core/models/market-stats.model';
     MatProgressSpinnerModule,
     MatIconModule,
     MatChipsModule,
+    BreadthBarComponent,
   ],
   templateUrl: './barometer-hero.component.html',
   styleUrl: './barometer-hero.component.scss',

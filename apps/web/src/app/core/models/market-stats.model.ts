@@ -33,4 +33,11 @@ export interface MarketStats {
   retailTmfLongShortRatio: number;
   txoPutCallRatio: number;                       // P/C Ratio
   usdtwd: number;                                // 匯率
+
+  // 市場廣度
+  advanceCount?: number;
+  limitUpCount?: number;
+  declineCount?: number;
+  limitDownCount?: number;
+  unchangedCount?: number;
 }
