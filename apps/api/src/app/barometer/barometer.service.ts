@@ -45,7 +45,7 @@ export class BarometerService {
       startDate: prevDateStr,
       endDate: date,
     });
-    const prevStats = recentStats.find(s => s.date < date) ?? null;
+    const prevStats = [...recentStats].reverse().find(s => s.date < date) ?? null;
     const historicalStats = recentStats.filter(s => s.date < date);
     const techContext = this.computeTechContext(historicalStats, todayStats);
 

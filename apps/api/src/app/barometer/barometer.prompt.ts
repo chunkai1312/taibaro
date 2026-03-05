@@ -121,24 +121,30 @@ export function buildUserMessage(today: Record<string, any>, prev: Record<string
     return v;
   };
   const fmtPct = (v: any) => (v == null ? '無資料' : `${(v * 100).toFixed(2)}%`);
+  // 元 → 億元（四捨五入至小數點後兩位）
+  const fmtYi = (v: any) => v == null ? '無資料' : `${+(v / 1e8).toFixed(2)} 億`;
+  // 仟元 → 億元
+  const fmtYiK = (v: any) => v == null ? '無資料' : `${+(v / 1e5).toFixed(2)} 億`;
+  // txoPutCallRatio：小數 → %
+  const fmtRatio = (v: any) => v == null ? '無資料' : `${(v * 100).toFixed(2)}%`;
 
   const lines = [
     `## 今日數據（${today.date}）`,
     `- 加權指數：${fmt(today.taiexPrice)}（漲跌：${fmt(today.taiexChange)}）`,
-    `- 大盤成交金額：${fmt(today.taiexTradeValue)}`,
-    `- 外資買賣超：${fmt(today.finiNetBuySell)}`,
-    `- 投信買賣超：${fmt(today.sitcNetBuySell)}`,
-    `- 自營商買賣超：${fmt(today.dealersNetBuySell)}`,
-    `- 融資餘額：${fmt(today.marginBalance)}（變化：${fmt(today.marginBalanceChange)}）`,
+    `- 大盤成交金額：${fmtYi(today.taiexTradeValue)}`,
+    `- 外資買賣超：${fmtYi(today.finiNetBuySell)}`,
+    `- 投信買賣超：${fmtYi(today.sitcNetBuySell)}`,
+    `- 自營商買賣超：${fmtYi(today.dealersNetBuySell)}`,
+    `- 融資餘額：${fmtYiK(today.marginBalance)}（變化：${fmtYiK(today.marginBalanceChange)}）`,
     `- 融券餘額：${fmt(today.shortBalance)}（變化：${fmt(today.shortBalanceChange)}）`,
-    `- 外資台指淨未平倉：${fmt(today.finiTxfNetOi)}（日變化：${fmt(today.finiTxfNetOiChange)}）`,
-    `- 十大特法近月台指淨部位：${fmt(today.topTenSpecificFrontMonthTxfNetOi)}`,
-    `- 十大特法遠月台指淨部位：${fmt(today.topTenSpecificBackMonthsTxfNetOi)}`,
-    `- 外資台指買權未平倉淨金額：${fmt(today.finiTxoCallsNetOiValue)}`,
-    `- 外資台指賣權未平倉淨金額：${fmt(today.finiTxoPutsNetOiValue)}`,
-    `- PUT/CALL Ratio：${fmt(today.txoPutCallRatio)}`,
-    `- 散戶微台多空比：${fmtPct(today.retailTmfLongShortRatio)}（淨部位：${fmt(today.retailTmfNetOi)}）`,
-    `- 散戶小台多空比：${fmtPct(today.retailMxfLongShortRatio)}（淨部位：${fmt(today.retailMxfNetOi)}）`,
+    `- 外資台指淨未平倉：${fmt(today.finiTxfNetOi)} 口（日變化：${fmt(today.finiTxfNetOiChange)}）`,
+    `- 十大特法近月台指淨部位：${fmt(today.topTenSpecificFrontMonthTxfNetOi)} 口`,
+    `- 十大特法遠月台指淨部位：${fmt(today.topTenSpecificBackMonthsTxfNetOi)} 口`,
+    `- 外資台指買權未平倉淨金額：${fmtYiK(today.finiTxoCallsNetOiValue)}`,
+    `- 外資台指賣權未平倉淨金額：${fmtYiK(today.finiTxoPutsNetOiValue)}`,
+    `- PUT/CALL Ratio：${fmtRatio(today.txoPutCallRatio)}`,
+    `- 散戶微台多空比：${fmtPct(today.retailTmfLongShortRatio)}（淨部位：${fmt(today.retailTmfNetOi)} 口）`,
+    `- 散戶小台多空比：${fmtPct(today.retailMxfLongShortRatio)}（淨部位：${fmt(today.retailMxfNetOi)} 口）`,
     `- 美元兌台幣：${fmt(today.usdtwd)}`,
   ];
 
@@ -146,12 +152,10 @@ export function buildUserMessage(today: Record<string, any>, prev: Record<string
     lines.push('');
     lines.push(`## 前日數據（${prev.date}，供趨勢對比）`);
     lines.push(`- 加權指數：${fmt(prev.taiexPrice)}`);
-    lines.push(`- 外資買賣超：${fmt(prev.finiNetBuySell)}`);
-    lines.push(`- 投信買賣超：${fmt(prev.sitcNetBuySell)}`);
-    lines.push(`- 外資台指淨未平倉：${fmt(prev.finiTxfNetOi)}`);
+    lines.push(`- 外資買賣超：${fmtYi(prev.finiNetBuySell)}`);
+    lines.push(`- 外資台指淨未平倉：${fmt(prev.finiTxfNetOi)} 口`);
     lines.push(`- 散戶微台多空比：${fmtPct(prev.retailTmfLongShortRatio)}`);
-    lines.push(`- 散戶小台多空比：${fmtPct(prev.retailMxfLongShortRatio)}`);
-    lines.push(`- 融資餘額：${fmt(prev.marginBalance)}`);
+    lines.push(`- 融資餘額：${fmtYiK(prev.marginBalance)}`);
   }
 
   if (tech) {
