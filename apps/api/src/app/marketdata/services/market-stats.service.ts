@@ -51,7 +51,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 集中市場加權指數: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('0 10 15-18 * * *')
+  @Cron('10 0 15-18 * * *')
   async updateMarketTrades(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.market.trades({ date, exchange: 'TWSE' })
       .then(data => data && {
@@ -64,7 +64,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 集中市場成交金額: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('0 20 15-18 * * *')
+  @Cron('20 0 15-18 * * *')
   async updateMarketBreadth(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.market.breadth({ date, exchange: 'TWSE' })
       .then(data => data && {
@@ -81,7 +81,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 集中市場上漲下跌家數: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('0 30 15-18 * * *')
+  @Cron('30 0 15-18 * * *')
   async updateInstInvestorsTrades(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.market.institutional({ date, exchange: 'TWSE' })
       .then(data => data && {
@@ -125,7 +125,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 外資臺股期貨未平倉淨口數: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('5 0 15-18 * * *')
+  @Cron('10 0 15-18 * * *')
   async updateFiniTxoNetOiValue(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.futopt.institutional({ date, symbol: 'TXO' })
       .then((data: any) => data && {
@@ -139,7 +139,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 外資臺指選擇權未平倉淨金額: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('10 0 15-18 * * *')
+  @Cron('20 0 15-18 * * *')
   async updateLargeTradersTxfNetOi(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.futopt.largeTraders({ date, symbol: 'TXF' })
       .then(data => {
@@ -158,7 +158,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 十大特法臺股期貨未平倉淨口數: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('15 0 15-18 * * *')
+  @Cron('30 0 15-18 * * *')
   async updateRetailMxfPosition(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.futopt.mxfRetailPosition({ date })
       .then(data => data && {
@@ -172,7 +172,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 散戶小台淨部位: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('20 0 15-18 * * *')
+  @Cron('40 0 15-18 * * *')
   async updateRetailTmfPosition(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.futopt.tmfRetailPosition({ date })
       .then(data => data && {
@@ -186,7 +186,7 @@ export class MarketStatsService {
     else Logger.warn(`${date} 散戶微台淨部位: 尚無資料或非交易日`, MarketStatsService.name);
   }
 
-  @Cron('25 0 15-18 * * *')
+  @Cron('50 0 15-18 * * *')
   async updateTxoPutCallRatio(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.futopt.txoPutCallRatio({ date })
       .then(data => data && {
