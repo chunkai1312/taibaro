@@ -63,6 +63,8 @@ export class MarketStatsRepository {
         && doc.topTenSpecificBackMonthsTxfNetOi - next.topTenSpecificBackMonthsTxfNetOi;
       data.retailMxfNetOiChange = has('retailMxfNetOi')
         && doc.retailMxfNetOi - next.retailMxfNetOi;
+      data.retailTmfNetOiChange = has('retailTmfNetOi')
+        && doc.retailTmfNetOi - next.retailTmfNetOi;
       data.usdtwdChange = has('usdtwd')
         && parseFloat((doc.usdtwd - next.usdtwd).toPrecision(12));
       return data;
