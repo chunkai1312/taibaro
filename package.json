@@ -5,7 +5,9 @@
   "scripts": {
     "serve": "nx run-many --target=serve --all",
     "build": "nx run-many --target=build --all",
-    "build:docker": "npm run build && docker build -t chunkai1312/taibaro --platform linux/amd64 ."
+    "build:docker": "npm run build && docker build -t chunkai1312/taibaro --platform linux/amd64 .",
+    "release": "release-it",
+    "prepare": "husky"
   },
   "private": true,
   "dependencies": {
@@ -47,6 +49,8 @@
     "@angular/cli": "~21.1.0",
     "@angular/compiler-cli": "~21.1.0",
     "@angular/language-service": "~21.1.0",
+    "@commitlint/cli": "^20.4.3",
+    "@commitlint/config-conventional": "^20.4.3",
     "@eslint/js": "^9.8.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.0",
@@ -59,6 +63,7 @@
     "@nx/web": "22.5.3",
     "@nx/webpack": "22.5.3",
     "@nx/workspace": "22.5.3",
+    "@release-it/conventional-changelog": "^10.0.5",
     "@schematics/angular": "~21.1.0",
     "@swc-node/register": "~1.11.1",
     "@swc/core": "~1.15.5",
@@ -70,9 +75,11 @@
     "angular-eslint": "^21.0.1",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^10.0.0",
+    "husky": "^9.1.7",
     "jsdom": "^27.1.0",
     "nx": "22.5.3",
     "prettier": "~3.6.2",
+    "release-it": "^19.2.4",
     "tslib": "^2.3.0",
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.40.0",
