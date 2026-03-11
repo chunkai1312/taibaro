@@ -3,6 +3,30 @@ import { HydratedDocument } from 'mongoose';
 
 export type TickerDocument = HydratedDocument<Ticker>;
 
+@Schema({ _id: false })
+export class InstitutionalTrade {
+  @Prop()
+  buy: number;
+
+  @Prop()
+  sell: number;
+
+  @Prop()
+  net: number;
+}
+
+@Schema({ _id: false })
+export class InstInvestors {
+  @Prop({ type: InstitutionalTrade })
+  fini: InstitutionalTrade;
+
+  @Prop({ type: InstitutionalTrade })
+  sitc: InstitutionalTrade;
+
+  @Prop({ type: InstitutionalTrade })
+  dealers: InstitutionalTrade;
+}
+
 @Schema({ timestamps: true })
 export class Ticker {
   @Prop({ required: true })
@@ -53,14 +77,8 @@ export class Ticker {
   @Prop()
   tradeWeight: number;
 
-  @Prop()
-  finiNetBuySell: number;
-
-  @Prop()
-  sitcNetBuySell: number;
-
-  @Prop()
-  dealersNetBuySell: number;
+  @Prop({ type: InstInvestors })
+  instInvestors?: InstInvestors;
 }
 
 export const TickerSchema = SchemaFactory.createForClass(Ticker)

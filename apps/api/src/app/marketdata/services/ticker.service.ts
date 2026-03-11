@@ -208,16 +208,23 @@ export class TickerService {
   @Cron('0 30 16 * * *')
   async updateTwseEquitiesInstInvestorsTrades(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.stocks.institutional({ date, exchange: 'TWSE' })
-      .then((data: any) => data && data.map(ticker => ({
-        date: ticker.date,
-        type: TickerType.Equity,
-        exchange: Exchange.TWSE,
-        market: Market.TSE,
-        symbol: ticker.symbol,
-        finiNetBuySell: sumBy(ticker.institutional.filter(row => ['外資及陸資(不含外資自營商)', '外資自營商'].includes(row.investor)), 'difference'),
-        sitcNetBuySell: sumBy(ticker.institutional.filter(row => ['投信'].includes(row.investor)), 'difference'),
-        dealersNetBuySell: sumBy(ticker.institutional.filter(row => ['自營商(自行買賣)', '自營商(避險)'].includes(row.investor)), 'difference'),
-      })))
+      .then((data: any) => data && data.map(ticker => {
+        const finiRows = ticker.institutional.filter(row => ['外資及陸資(不含外資自營商)', '外資自營商'].includes(row.investor));
+        const sitcRows = ticker.institutional.filter(row => ['投信'].includes(row.investor));
+        const dealersRows = ticker.institutional.filter(row => ['自營商(自行買賣)', '自營商(避險)'].includes(row.investor));
+        return {
+          date: ticker.date,
+          type: TickerType.Equity,
+          exchange: Exchange.TWSE,
+          market: Market.TSE,
+          symbol: ticker.symbol,
+          instInvestors: {
+            fini:    { buy: sumBy(finiRows, 'totalBuy'),    sell: sumBy(finiRows, 'totalSell'),    net: sumBy(finiRows, 'difference') },
+            sitc:    { buy: sumBy(sitcRows, 'totalBuy'),    sell: sumBy(sitcRows, 'totalSell'),    net: sumBy(sitcRows, 'difference') },
+            dealers: { buy: sumBy(dealersRows, 'totalBuy'), sell: sumBy(dealersRows, 'totalSell'), net: sumBy(dealersRows, 'difference') },
+          },
+        };
+      }))
       .then(data => data && Promise.all(data.map(ticker => this.tickerRepository.updateTicker(ticker))));
 
     if (updated) Logger.log(`${date} 上市個股法人進出: 已更新`, TickerService.name);
@@ -227,16 +234,23 @@ export class TickerService {
   @Cron('0 30 16 * * *')
   async updateTpexEquitiesInstInvestorsTrades(date: string = DateTime.local().toISODate()) {
     const updated = await this.twstock.stocks.institutional({ date, exchange: 'TPEx' })
-      .then((data: any) => data && data.map(ticker => ({
-        date: ticker.date,
-        type: TickerType.Equity,
-        exchange: Exchange.TPEx,
-        market: Market.OTC,
-        symbol: ticker.symbol,
-        finiNetBuySell: sumBy(ticker.institutional.filter(row => ['外資及陸資(不含外資自營商)', '外資自營商'].includes(row.investor)), 'difference'),
-        sitcNetBuySell: sumBy(ticker.institutional.filter(row => ['投信'].includes(row.investor)), 'difference'),
-        dealersNetBuySell: sumBy(ticker.institutional.filter(row => ['自營商(自行買賣)', '自營商(避險)'].includes(row.investor)), 'difference'),
-      })))
+      .then((data: any) => data && data.map(ticker => {
+        const finiRows = ticker.institutional.filter(row => ['外資及陸資(不含外資自營商)', '外資自營商'].includes(row.investor));
+        const sitcRows = ticker.institutional.filter(row => ['投信'].includes(row.investor));
+        const dealersRows = ticker.institutional.filter(row => ['自營商(自行買賣)', '自營商(避險)'].includes(row.investor));
+        return {
+          date: ticker.date,
+          type: TickerType.Equity,
+          exchange: Exchange.TPEx,
+          market: Market.OTC,
+          symbol: ticker.symbol,
+          instInvestors: {
+            fini:    { buy: sumBy(finiRows, 'totalBuy'),    sell: sumBy(finiRows, 'totalSell'),    net: sumBy(finiRows, 'difference') },
+            sitc:    { buy: sumBy(sitcRows, 'totalBuy'),    sell: sumBy(sitcRows, 'totalSell'),    net: sumBy(sitcRows, 'difference') },
+            dealers: { buy: sumBy(dealersRows, 'totalBuy'), sell: sumBy(dealersRows, 'totalSell'), net: sumBy(dealersRows, 'difference') },
+          },
+        };
+      }))
       .then(data => data && Promise.all(data.map(ticker => this.tickerRepository.updateTicker(ticker))));
 
     if (updated) Logger.log(`${date} 上櫃個股法人進出: 已更新`, TickerService.name);

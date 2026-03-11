@@ -38,7 +38,7 @@ export class AppModule implements OnApplicationBootstrap {
 
       for (let dt = startDate; dt <= endDate; dt = dt.plus({ day: 1 })) {
         await this.marketStatsService.updateMarketStats(dt.toISODate());
-        // await this.tickerService.updateTickers(dt.toISODate());
+        await this.tickerService.updateTickers(dt.toISODate());
       }
 
       Logger.log('應用程式初始化完成', AppModule.name);

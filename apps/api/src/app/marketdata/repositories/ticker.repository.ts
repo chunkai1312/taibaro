@@ -115,7 +115,7 @@ export class TickerRepository {
     const inst = options?.inst || `fini`;
     const net = options?.net || 'buy';
     const top = options?.top || 50;
-    const instKey = `${inst}NetBuySell`;
+    const instKey = `instInvestors.${inst}.net`;
 
     const results = await this.model.aggregate([
       { $match: {
