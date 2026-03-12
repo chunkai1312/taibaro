@@ -18,6 +18,7 @@ import { MarketStats } from '../../core/models/market-stats.model';
 import { BarometerHeroComponent } from './components/barometer-hero/barometer-hero.component';
 import { StatsOverviewComponent } from './components/stats-overview/stats-overview.component';
 import { ChartTabGroupComponent } from './components/trend-chart/chart-tab-group/chart-tab-group.component';
+import { KlineChartComponent } from './components/kline-chart/kline-chart.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -25,6 +26,7 @@ import { ChartTabGroupComponent } from './components/trend-chart/chart-tab-group
   imports: [
     CommonModule,
     BarometerHeroComponent,
+    KlineChartComponent,
     StatsOverviewComponent,
     ChartTabGroupComponent,
   ],

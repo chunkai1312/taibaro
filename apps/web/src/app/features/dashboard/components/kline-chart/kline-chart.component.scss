@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+.kline-card {
+  border-radius: 16px;
+
+  mat-card-content {
+    padding: 0 !important;
+  }
+
+  .chart-content {
+    padding: 16px 16px 8px;
+  }
+}
