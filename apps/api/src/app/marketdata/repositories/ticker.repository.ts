@@ -29,6 +29,18 @@ export class TickerRepository {
       .exec();
   }
 
+  async getOhlcBySymbol(options: { symbol: string, startDate?: string, endDate?: string }) {
+    const startDate = options.startDate ?? DateTime.local().minus({ months: 3 }).toISODate();
+    const endDate = options.endDate ?? DateTime.local().toISODate();
+
+    return this.model
+      .find({ symbol: options.symbol, date: { $gte: startDate, $lte: endDate } })
+      .select({ _id: 0, date: 1, openPrice: 1, highPrice: 1, lowPrice: 1, closePrice: 1, tradeValue: 1 })
+      .sort({ date: 1 })
+      .lean()
+      .exec();
+  }
+
   async getMoneyFlow(options?: { date?: string, market?: Market }) {
     const date = options?.date || DateTime.local().toISODate();
     const market = options?.market || Market.TSE;
