@@ -35,7 +35,7 @@ export class ToolbarComponent {
   readonly themeService = inject(ThemeService);
   readonly isDark = this.themeService.isDark;
 
-  readonly ranges: TimeRange[] = ['1M', '3M', '6M'];
+  readonly ranges: TimeRange[] = ['1M', '3M', '6M', '1Y'];
 
   readonly selectedDateObj = computed(() =>
     new Date(this.state.selectedDate() + 'T00:00:00')
