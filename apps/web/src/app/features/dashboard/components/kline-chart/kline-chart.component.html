@@ -1,6 +1,8 @@
 <mat-card class="kline-card">
   <div class="card-header">
-    <span class="card-title">加權指數 K 線</span>
+    <ng-content select="[cardTitle]">
+      <span class="card-title">加權指數 K 線</span>
+    </ng-content>
     <div class="header-controls">
       <div class="interval-buttons">
         <button class="range-btn" [class.active]="chartInterval() === 'D'" (click)="setChartInterval('D')">日K</button>

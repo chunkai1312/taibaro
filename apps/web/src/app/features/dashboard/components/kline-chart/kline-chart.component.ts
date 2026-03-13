@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, OnDestroy } from '@angular/core';
+import { Component, computed, inject, input, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { Subject, combineLatest, switchMap, catchError, of, takeUntil } from 'rxjs';
@@ -193,6 +193,8 @@ export class KlineChartComponent implements OnDestroy {
   private tickerService = inject(TickerService);
   private destroy$ = new Subject<void>();
 
+  readonly symbol = input<string>('IX0001');
+
   readonly maDefs = MA_DEFS;
   readonly localRange = signal<TimeRange>('3M');
   readonly chartInterval = signal<'D' | 'W'>('D');
@@ -265,12 +267,13 @@ export class KlineChartComponent implements OnDestroy {
     combineLatest([
       toObservable(this.state.endDate),
       toObservable(this.chartInterval),
+      toObservable(this.symbol),
     ])
       .pipe(
-        switchMap(([end, interval]) => {
+        switchMap(([end, interval, sym]) => {
           const months = interval === 'W' ? 24 : 12;
           const start = DateTime.fromISO(end).minus({ months }).toISODate() ?? '';
-          return this.tickerService.getTicker('IX0001', start, end).pipe(
+          return this.tickerService.getTicker(sym, start, end).pipe(
             catchError(() => of([] as TickerOhlc[]))
           );
         }),
