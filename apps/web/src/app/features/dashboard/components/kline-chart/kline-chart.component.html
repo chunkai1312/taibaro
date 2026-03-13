@@ -7,9 +7,20 @@
       }
     </div>
   </div>
+  <div class="ma-bar">
+    @for (def of maDefs; track def.period; let i = $index) {
+      <span class="ma-item" [style.color]="def.color">
+        MA{{ def.period }}: {{ displayMaValues()[i] ?? '—' }}
+      </span>
+    }
+  </div>
   <mat-card-content>
     <div class="chart-content">
-      <app-indicator-chart [option]="chartOption()" height="420px"></app-indicator-chart>
+      <app-indicator-chart
+        [option]="chartOption()"
+        height="400px"
+        (chartGlobalout)="resetHover()"
+      ></app-indicator-chart>
     </div>
   </mat-card-content>
 </mat-card>

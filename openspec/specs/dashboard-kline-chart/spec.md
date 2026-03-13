@@ -3,7 +3,19 @@
 
 #### Scenario: 成功載入 K 線資料
 - **WHEN** Dashboard 載入且 `GET /marketdata/tickers?symbol=IX0001` 回傳成功
-- **THEN** 系統 SHALL 顯示 candlestick K 棒與成交量 bar（疊於主圖下方），並顯示 MA5/MA10/MA20 均線
+- **THEN** 系統 SHALL 顯示 candlestick K 棒與成交量 bar（疊於主圖下方），並顯示 MA5/MA10/MA20/MA60/MA120/MA240 均線
+
+#### Scenario: MA info bar 常駐顯示
+- **WHEN** K 線圖渲染完成
+- **THEN** 圖表標題列下方 SHALL 顯示一排 MA info bar，列出 MA5～MA240 的當前值，每個 MA 值以對應顏色標示（MA5 琥珀黃、MA10 橙、MA20 淺紫、MA60 青藍、MA120 粉紅、MA240 黃綠；刻意避開 K 棒紅/綠以防撞色），預設顯示最後一根 K 棒的 MA 值
+
+#### Scenario: MA info bar 隨 hover 更新
+- **WHEN** 用戶 hover K 線圖任意 K 棒
+- **THEN** MA info bar SHALL 即時更新為該 K 棒日期對應的 MA 值；滑鼠離開圖表時 SHALL 自動恢復為最後一根 K 棒的 MA 值
+
+#### Scenario: MA 均線 warmup 正確性
+- **WHEN** 用戶切換至較短 range（如 1M）
+- **THEN** MA 均線 SHALL 不因 slice 資料不足而在可見範圍前段顯示空值缺口（使用完整 1Y 資料計算後再 slice 對應段落顯示）
 
 #### Scenario: 台灣紅漲綠跌色系
 - **WHEN** K 線圖渲染資料

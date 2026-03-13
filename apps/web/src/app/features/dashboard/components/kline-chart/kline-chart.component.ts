@@ -15,9 +15,12 @@ const BULL_COLOR = '#EF4444';
 const BEAR_COLOR = '#22C55E';
 
 const MA_DEFS: { period: number; color: string }[] = [
-  { period: 5,  color: '#F5C542' },
-  { period: 10, color: '#F4874B' },
-  { period: 20, color: '#C875C4' },
+  { period: 5,   color: '#FBBF24' },  // 琥珀黃
+  { period: 10,  color: '#F97316' },  // 橙（避開 BULL_COLOR）
+  { period: 20,  color: '#A78BFA' },  // 淺紫
+  { period: 60,  color: '#22D3EE' },  // 青藍（避開 BEAR_COLOR）
+  { period: 120, color: '#EC4899' },  // 粉紅
+  { period: 240, color: '#A3E635' },  // 黃綠
 ];
 
 function calcMa(period: number, closes: number[]): (number | null)[] {
@@ -28,11 +31,19 @@ function calcMa(period: number, closes: number[]): (number | null)[] {
   });
 }
 
-function buildKlineOption(data: TickerOhlc[]): EChartsOption {
-  const dates = data.map(d => d.date);
-  const closes = data.map(d => d.closePrice);
-  const ohlc = data.map(d => [d.openPrice, d.closePrice, d.lowPrice, d.highPrice]);
-  const volumes = data.map(d => ({
+function buildKlineOption(
+  displayData: TickerOhlc[],
+  allData: TickerOhlc[],
+  onHover?: (idx: number) => void,
+): EChartsOption {
+  // MA 用全量資料算，避免 slice 後前段出現 null warmup 缺口
+  const allCloses = allData.map(d => d.closePrice);
+  const displayOffset = allData.length - displayData.length;
+
+  const dates = displayData.map(d => d.date);
+  const closes = displayData.map(d => d.closePrice);
+  const ohlc = displayData.map(d => [d.openPrice, d.closePrice, d.lowPrice, d.highPrice]);
+  const volumes = displayData.map(d => ({
     value: +(d.tradeValue / 1e8).toFixed(2),
     itemStyle: { color: d.closePrice >= d.openPrice ? BULL_COLOR : BEAR_COLOR },
   }));
@@ -42,7 +53,7 @@ function buildKlineOption(data: TickerOhlc[]): EChartsOption {
     type: 'line' as const,
     xAxisIndex: 0,
     yAxisIndex: 0,
-    data: calcMa(period, closes),
+    data: calcMa(period, allCloses).slice(displayOffset),
     smooth: false,
     symbol: 'none',
     lineStyle: { width: 1.5, color },
@@ -52,22 +63,7 @@ function buildKlineOption(data: TickerOhlc[]): EChartsOption {
   return {
     animation: false,
     backgroundColor: 'transparent',
-    title: {
-      left: 12,
-      top: 8,
-      textStyle: { fontSize: 13, fontWeight: 600 },
-    },
-    legend: {
-      top: 4,
-      itemWidth: 16,
-      itemHeight: 3,
-      textStyle: { fontSize: 11 },
-      data: MA_DEFS.map(m => ({
-        name: `MA${m.period}`,
-        itemStyle: { color: m.color },
-        lineStyle: { color: m.color },
-      })),
-    },
+    legend: { show: false },
     grid: [
       { left: '80px', right: '20px', top: '40px', bottom: '60px' },
     ],
@@ -108,7 +104,8 @@ function buildKlineOption(data: TickerOhlc[]): EChartsOption {
         const raw = (k.data ?? k.value) as number[];
         const [o, c, l, h] = raw.length === 5 ? raw.slice(1) : raw;
         const idx = k.dataIndex as number;
-        const prevClose = idx > 0 ? data[idx - 1].closePrice : o;
+        onHover?.(idx);
+        const prevClose = idx > 0 ? displayData[idx - 1].closePrice : o;
         const change = +(c - prevClose).toFixed(2);
         const pct = +((change / prevClose) * 100).toFixed(2);
         const color = change >= 0 ? BULL_COLOR : BEAR_COLOR;
@@ -173,10 +170,12 @@ export class KlineChartComponent implements OnDestroy {
   private tickerService = inject(TickerService);
   private destroy$ = new Subject<void>();
 
+  readonly maDefs = MA_DEFS;
   readonly localRange = signal<TimeRange>('3M');
   readonly ranges: TimeRange[] = ['1M', '3M', '6M', '1Y'];
 
   readonly rawData = signal<TickerOhlc[]>([]);
+  readonly hoveredIndex = signal<number | null>(null);
 
   readonly filteredData = computed<TickerOhlc[]>(() => {
     const data = this.rawData();
@@ -187,13 +186,38 @@ export class KlineChartComponent implements OnDestroy {
     return data.filter(d => d.date >= cutoff);
   });
 
+  // 預先計算各 MA 序列（顯示區間的完整陣列）
+  readonly maData = computed<(number | null)[][]>(() => {
+    const display = this.filteredData();
+    const all = this.rawData();
+    if (!display.length || !all.length) return MA_DEFS.map(() => []);
+    const allCloses = all.map(d => d.closePrice);
+    const offset = all.length - display.length;
+    return MA_DEFS.map(({ period }) => calcMa(period, allCloses).slice(offset));
+  });
+
+  // 目前要顯示的 MA 值（hover 中的 bar 或最後一根）
+  readonly displayMaValues = computed<(number | null)[]>(() => {
+    const maData = this.maData();
+    const len = this.filteredData().length;
+    if (!len) return MA_DEFS.map(() => null);
+    const idx = this.hoveredIndex() ?? (len - 1);
+    return maData.map(series => series[idx] ?? null);
+  });
+
   readonly chartOption = computed<EChartsOption | null>(() => {
-    const data = this.filteredData();
-    return data.length > 0 ? buildKlineOption(data) : null;
+    const display = this.filteredData();
+    const all = this.rawData();
+    if (!display.length) return null;
+    return buildKlineOption(display, all, (idx) => this.hoveredIndex.set(idx));
   });
 
   setLocalRange(range: TimeRange) {
     this.localRange.set(range);
+  }
+
+  resetHover() {
+    this.hoveredIndex.set(null);
   }
 
   constructor() {

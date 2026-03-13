@@ -55,6 +55,22 @@
     }
   }
 
+  .ma-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 16px 6px;
+
+    .ma-item {
+      font-size: 0.78rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+  }
+
   .chart-content {
     padding: 0 16px 8px;
   }

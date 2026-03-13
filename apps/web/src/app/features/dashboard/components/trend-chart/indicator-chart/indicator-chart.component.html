@@ -4,6 +4,7 @@
     [options]="option()!"
     [theme]="isDark() ? 'dark' : ''"
     [style.height]="height()"
+    (chartGlobalout)="chartGlobalout.emit()"
     class="chart-container"
   ></div>
 } @else {
