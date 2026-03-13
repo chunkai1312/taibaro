@@ -1,0 +1,75 @@
+<mat-card class="ranking-card">
+  <mat-card-content>
+    <div class="table-wrap">
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th class="col-name">產業</th>
+            <th class="col-num">指數</th>
+            <th class="col-num">漲跌</th>
+            <th class="col-num sortable" (click)="sort('changePercent')">
+              漲跌幅 <mat-icon>{{ sortIcon('changePercent') }}</mat-icon>
+            </th>
+            <th class="col-num sortable" (click)="sort('tradeValue')">
+              成交金額(億) <mat-icon>{{ sortIcon('tradeValue') }}</mat-icon>
+            </th>
+            <th class="col-num sortable" (click)="sort('tradeValuePrev')">
+              昨日金額(億) <mat-icon>{{ sortIcon('tradeValuePrev') }}</mat-icon>
+            </th>
+            <th class="col-num sortable" (click)="sort('tradeValueChange')">
+              金額差(億) <mat-icon>{{ sortIcon('tradeValueChange') }}</mat-icon>
+            </th>
+            <th class="col-num sortable" (click)="sort('tradeWeight')">
+              比重% <mat-icon>{{ sortIcon('tradeWeight') }}</mat-icon>
+            </th>
+            <th class="col-num sortable" (click)="sort('tradeWeightPrev')">
+              昨日比重% <mat-icon>{{ sortIcon('tradeWeightPrev') }}</mat-icon>
+            </th>
+            <th class="col-num sortable" (click)="sort('tradeWeightChange')">
+              比重差 <mat-icon>{{ sortIcon('tradeWeightChange') }}</mat-icon>
+            </th>
+            <th class="col-bar">漲跌幅圖</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of sorted(); track row.symbol) {
+            <tr class="data-row">
+              <td class="col-name">{{ row.name }}</td>
+              <td class="col-num" [class.positive]="row.change > 0" [class.negative]="row.change < 0">{{ row.closePrice | number:'1.2-2' }}</td>
+              <td class="col-num" [class.positive]="row.change > 0" [class.negative]="row.change < 0">
+                {{ fmtChange(row.change) }}
+              </td>
+              <td class="col-num" [class.positive]="row.changePercent > 0" [class.negative]="row.changePercent < 0">
+                {{ fmtChange(row.changePercent) }}%
+              </td>
+              <td class="col-num">{{ fmtValue(row.tradeValue) }}</td>
+              <td class="col-num">{{ fmtValue(row.tradeValuePrev) }}</td>
+              <td class="col-num" [class.positive]="row.tradeValueChange > 0" [class.negative]="row.tradeValueChange < 0">
+                {{ fmtChange(+(row.tradeValueChange / 1e8).toFixed(2)) }}
+              </td>
+              <td class="col-num">{{ fmtWeight(row.tradeWeight) }}%</td>
+              <td class="col-num">{{ fmtWeight(row.tradeWeightPrev) }}%</td>
+              <td class="col-num" [class.positive]="row.tradeWeightChange > 0" [class.negative]="row.tradeWeightChange < 0">
+                {{ fmtWeightChange(row.tradeWeightChange) }}%
+              </td>
+              <td class="col-bar">
+                <div class="bar-wrap">
+                  <div class="bar-left">
+                    @if (row.changePercent < 0) {
+                      <div class="bar bar-neg" [style.width.%]="barPct(row.changePercent)"></div>
+                    }
+                  </div>
+                  <div class="bar-right">
+                    @if (row.changePercent > 0) {
+                      <div class="bar bar-pos" [style.width.%]="barPct(row.changePercent)"></div>
+                    }
+                  </div>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

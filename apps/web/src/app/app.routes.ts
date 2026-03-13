@@ -8,5 +8,12 @@ export const appRoutes: Route[] = [
         (m) => m.DashboardComponent
       ),
   },
+  {
+    path: 'sector-flow',
+    loadComponent: () =>
+      import('./features/sector-flow/sector-flow.component').then(
+        (m) => m.SectorFlowComponent
+      ),
+  },
   { path: '**', redirectTo: '' },
 ];

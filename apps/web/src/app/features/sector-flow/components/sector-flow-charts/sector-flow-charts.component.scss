@@ -1,0 +1,66 @@
+.chart-card {
+  border-radius: 16px;
+
+  mat-card-content {
+    padding: 0 !important;
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 8px;
+
+  .sector-select {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: transparent;
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    border-radius: 6px;
+    padding: 4px 8px;
+    cursor: pointer;
+    outline: none;
+
+    &:hover { border-color: rgba(128, 128, 128, 0.6); }
+    &:focus { border-color: var(--color-accent, #6366f1); }
+  }
+
+  .range-buttons {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    border-radius: 8px;
+    padding: 2px;
+    gap: 2px;
+
+    .range-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      line-height: 1.6;
+
+      &:hover {
+        color: var(--text-primary);
+        background: rgba(128, 128, 128, 0.12);
+      }
+
+      &.active {
+        background: rgba(128, 128, 128, 0.18);
+        color: var(--text-primary);
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.tab-content {
+  padding: 16px 16px 8px;
+}

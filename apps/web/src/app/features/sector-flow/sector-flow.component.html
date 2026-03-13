@@ -1,0 +1,27 @@
+<div class="sector-flow">
+  <!-- Section 1: 排行表 -->
+  <section class="section">
+    <div class="section-title">產業資金流向</div>
+    <app-sector-ranking-table></app-sector-ranking-table>
+  </section>
+
+  <!-- Section 2: 資金流向圖 -->
+  @if (selectedSymbol()) {
+    <section class="section">
+      <div class="section-title">資金流向明細</div>
+      <app-sector-flow-charts></app-sector-flow-charts>
+    </section>
+
+    <!-- Section 3: 產業類股走勢 -->
+    <section class="section">
+      <div class="section-title">產業類股走勢</div>
+      <app-kline-chart [symbol]="klineSymbol()!">
+        <select cardTitle class="sector-select" (change)="onKlineSymbolChange($any($event.target).value)">
+          @for (s of state.sectors(); track s.symbol) {
+            <option [value]="s.symbol" [selected]="s.symbol === klineSymbol()">{{ s.name }}</option>
+          }
+        </select>
+      </app-kline-chart>
+    </section>
+  }
+</div>

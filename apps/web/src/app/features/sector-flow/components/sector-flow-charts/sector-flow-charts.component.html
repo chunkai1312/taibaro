@@ -1,0 +1,19 @@
+<mat-card class="chart-card">
+  <div class="card-header">
+    <select class="sector-select" (change)="onSectorChange($any($event.target).value)">
+      @for (s of state.sectors(); track s.symbol) {
+        <option [value]="s.symbol" [selected]="s.symbol === state.selectedSymbol()">{{ s.name }}</option>
+      }
+    </select>
+    <div class="range-buttons">
+      @for (r of ranges; track r) {
+        <button class="range-btn" [class.active]="localRange() === r" (click)="setRange(r)">{{ r }}</button>
+      }
+    </div>
+  </div>
+  <mat-card-content>
+    <div class="tab-content">
+      <app-indicator-chart [option]="moneyFlowOption()" height="320px"></app-indicator-chart>
+    </div>
+  </mat-card-content>
+</mat-card>
