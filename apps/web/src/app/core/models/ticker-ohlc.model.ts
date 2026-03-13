@@ -5,4 +5,5 @@ export interface TickerOhlc {
   lowPrice: number;
   closePrice: number;
   tradeValue: number;
+  tradeWeight?: number;
 }
