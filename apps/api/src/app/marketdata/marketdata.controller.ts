@@ -5,6 +5,7 @@ import { MarketStatsRepository } from './repositories/market-stats.repository';
 import { TickerRepository } from './repositories/ticker.repository';
 import { GetMarketStatsDto } from './dto/get-market-stats.dto';
 import { GetTickerOhlcDto } from './dto/get-ticker-ohlc.dto';
+import { GetSectorFlowDto } from './dto/get-sector-flow.dto';
 
 @ApiTags('marketdata')
 @Controller('marketdata')
@@ -31,5 +32,11 @@ export class MarketDataController {
       startDate: query.startDate,
       endDate: query.endDate,
     });
+  }
+
+  @ApiOperation({ summary: '取得 TSE 上市產業資金流向排行' })
+  @Get('sector-flow')
+  getSectorFlow(@Query() query: GetSectorFlowDto) {
+    return this.tickerRepository.getSectorFlow({ date: query.date });
   }
 }

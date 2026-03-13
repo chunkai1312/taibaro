@@ -82,4 +82,5 @@ export class Ticker {
 }
 
 export const TickerSchema = SchemaFactory.createForClass(Ticker)
-  .index({ date: -1, symbol: 1 }, { unique: true });
+  .index({ date: -1, symbol: 1 }, { unique: true })
+  .index({ type: 1, market: 1, date: -1 });

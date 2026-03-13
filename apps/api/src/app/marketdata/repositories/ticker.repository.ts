@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { DateTime } from 'luxon';
 import { Ticker, TickerDocument } from '../schemas/ticker.schema';
 import { TickerType, Market, Index } from '../enums';
+import { getSectorName } from '../utils';
 
 @Injectable()
 export class TickerRepository {
@@ -35,7 +36,7 @@ export class TickerRepository {
 
     return this.model
       .find({ symbol: options.symbol, date: { $gte: startDate, $lte: endDate } })
-      .select({ _id: 0, date: 1, openPrice: 1, highPrice: 1, lowPrice: 1, closePrice: 1, tradeValue: 1 })
+      .select({ _id: 0, date: 1, openPrice: 1, highPrice: 1, lowPrice: 1, closePrice: 1, tradeValue: 1, tradeWeight: 1 })
       .sort({ date: 1 })
       .lean()
       .exec();
@@ -69,6 +70,65 @@ export class TickerRepository {
       data.tradeWeightChange = parseFloat((doc.tradeWeight - data.tradeWeightPrev).toPrecision(12));
       return data;
     });
+  }
+
+  async getSectorFlow(options?: { date?: string }) {
+    const date = options?.date || DateTime.local().toISODate();
+
+    // 取最近兩個交易日的 TSE 所有產業指數（含 TAIEX 用於 RS 計算）
+    // 排除：非產業複合指數 (IX0007/0008/0009) + 合併類複合指數 (IX0013/0014/0015/0019/0027)
+    const excludedSymbols = [
+      Index.NonFinance,                        // IX0007 未含金融指數
+      Index.NonElectronics,                    // IX0008 未含電子指數
+      Index.NonFinanceNonElectronics,          // IX0009 未含金融電子指數
+      Index.CementAndCeramic,                  // IX0013 水泥窯製類指數（水泥+玻璃陶瓷合併）
+      Index.PlasticAndChemical,                // IX0014 塑膠化工類指數（塑膠+化學合併）
+      Index.Electrical,                        // IX0015 機電類指數（電機機械+電器電纜合併）
+      Index.ChemicalBiotechnologyAndMedicalCare, // IX0019 化學生技醫療類指數（化學+生技合併）
+      Index.Electronics,                       // IX0027 電子工業類指數（所有電子子類合併）
+    ];
+
+    const results = await this.model.aggregate([
+      { $match: {
+          date: { $lte: date },
+          type: TickerType.Index,
+          market: Market.TSE,
+          symbol: { $nin: excludedSymbols },
+        },
+      },
+      { $project: { _id: 0, date: 1, symbol: 1, name: 1, closePrice: 1, change: 1, changePercent: 1, tradeValue: 1, tradeWeight: 1 } },
+      { $group: { _id: '$date', data: { $push: '$$ROOT' } } },
+      { $sort: { _id: -1 } },
+      { $limit: 2 },
+    ]);
+
+    if (!results.length) return [];
+
+    const [tickers, tickersPrev] = results.map(doc => doc.data);
+    const taiex = tickers?.find((doc: any) => doc.symbol === Index.TAIEX);
+
+    return tickers
+      .filter((doc: any) => doc.symbol !== Index.TAIEX)
+      .map((doc: any) => {
+        const prev = _.find(tickersPrev, { symbol: doc.symbol });
+        const tradeValuePrev = prev?.tradeValue ?? 0;
+        const tradeWeightPrev = prev?.tradeWeight ?? 0;
+        return {
+          symbol: doc.symbol,
+          name: getSectorName(doc.name),
+          date: doc.date,
+          closePrice: doc.closePrice,
+          change: doc.change,
+          changePercent: doc.changePercent,
+          tradeValue: doc.tradeValue,
+          tradeValuePrev,
+          tradeValueChange: doc.tradeValue - tradeValuePrev,
+          tradeWeight: doc.tradeWeight,
+          tradeWeightPrev,
+          tradeWeightChange: parseFloat((doc.tradeWeight - tradeWeightPrev).toPrecision(12)),
+          rs: taiex?.closePrice ? parseFloat((doc.closePrice / taiex.closePrice).toFixed(4)) : null,
+        };
+      });
   }
 
   async getTopMovers(options?: { date?: string, market?: Market, direction?: 'up' | 'down', top?: number }) {
