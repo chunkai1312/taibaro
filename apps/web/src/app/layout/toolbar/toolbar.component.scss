@@ -21,6 +21,36 @@
     letter-spacing: 0.02em;
   }
 
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 16px;
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+
+      &:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      &.active {
+        color: white;
+        background: rgba(255, 255, 255, 0.22);
+      }
+    }
+  }
+
   .spacer {
     flex: 1;
   }

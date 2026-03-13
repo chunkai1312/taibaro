@@ -4,6 +4,7 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,6 +19,8 @@ import { ThemeService } from '../../core/services/theme.service';
   standalone: true,
   imports: [
     CommonModule,
+    RouterLink,
+    RouterLinkActive,
     MatToolbarModule,
     MatIconButton,
     MatButton,
