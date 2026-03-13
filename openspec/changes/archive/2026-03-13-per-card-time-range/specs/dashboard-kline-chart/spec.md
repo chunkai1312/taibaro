@@ -1,3 +1,5 @@
+## MODIFIED Requirements
+
 ### Requirement: 大盤 K 線圖
 系統 SHALL 在 Dashboard 的晴雨表 Hero Card 與今日籌碼速覽之間顯示加權指數 K 線圖（IX0001），採單一繪圖區，K 棒主圖佔上方主要空間，成交量 bar 疊於主圖下方（透過獨立隱藏 Y 軸控制高度佔比約 20%），卡片標題列 SHALL 提供 `[1M][3M][6M][1Y]` 獨立 range 選擇器。
 

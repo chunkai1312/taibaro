@@ -80,17 +80,8 @@
 
 ---
 
-### Requirement: 時間範圍切換
-系統 SHALL 提供 `[1M][3M][6M][1Y]` 四個快速切換按鈕，用於控制 K 線圖及趨勢圖表的資料時間範圍，預設為 3M。
-
-#### Scenario: 切換時間範圍
-- **WHEN** 用戶點擊 `[1M]`、`[3M]`、`[6M]` 或 `[1Y]`
-- **THEN** 系統 SHALL 以當前基準日往前推算對應時間（1M=1個月、3M=3個月、6M=6個月、1Y=12個月）作為 `startDate`，重新請求 `market-stats` 資料並更新 K 線圖與所有趨勢圖
-
----
-
 ### Requirement: 趨勢圖表（雙 Y 軸）
-系統 SHALL 顯示雙 Y 軸趨勢圖，左 Y 軸永遠為加權指數折線（`taiexPrice`），右 Y 軸為用戶透過 ChipListbox 選取的籌碼指標，並以 MatTabGroup 分為四個指標群。
+系統 SHALL 顯示雙 Y 軸趨勢圖，左 Y 軸永遠為加權指數折線（`taiexPrice`），右 Y 軸為用戶透過 ChipListbox 選取的籌碼指標，並以 MatTabGroup 分為四個指標群。卡片標題列 SHALL 提供獨立的 `[1M][3M][6M][1Y]` range 選擇器。
 
 #### Scenario: 加權指數永遠顯示
 - **WHEN** 趨勢圖表載入
@@ -99,6 +90,10 @@
 #### Scenario: 副軸指標切換
 - **WHEN** 用戶點選 ChipListbox 中的指標
 - **THEN** 系統 SHALL 立即更新右 Y 軸資料為對應指標，無需重新發送 API 請求（前端切換）
+
+#### Scenario: 與卡片 range 選擇器聯動
+- **WHEN** 用戶點擊趨勢圖卡片的 `[1M]`、`[3M]`、`[6M]` 或 `[1Y]` 按鈕
+- **THEN** 趨勢圖 SHALL 立即更新所有指標的顯示範圍至對應期間（前端 slice，不重新請求 API）
 
 #### Scenario: 長條正負色彩（台灣慣例）
 - **WHEN** 副軸為長條圖類指標
@@ -152,7 +147,7 @@
 ---
 
 ### Requirement: 大盤 K 線圖
-系統 SHALL 在 Dashboard 的晴雨表 Hero Card 與今日籌碼速覽之間顯示加權指數 K 線圖（IX0001），採單一繪圖區，K 棒主圖佔上方主要空間，成交量 bar 疊於主圖下方（透過獨立隱藏 Y 軸控制高度佔比約 20%），並與 topbar 時間範圍選擇器聯動。
+系統 SHALL 在 Dashboard 的晴雨表 Hero Card 與今日籌碼速覽之間顯示加權指數 K 線圖（IX0001），採單一繪圖區，K 棒主圖佔上方主要空間，成交量 bar 疊於主圖下方（透過獨立隱藏 Y 軸控制高度佔比約 20%），卡片標題列 SHALL 提供獨立的 `[1M][3M][6M][1Y]` range 選擇器。
 
 #### Scenario: 成功載入 K 線資料
 - **WHEN** Dashboard 載入且 `GET /marketdata/tickers?symbol=IX0001` 回傳成功
@@ -162,9 +157,9 @@
 - **WHEN** K 線圖渲染資料
 - **THEN** 陽線（收盤 ≥ 開盤）SHALL 顯示紅色（`#EF4444`），陰線（收 < 開）SHALL 顯示綠色（`#22C55E`）；成交量 bar 顏色 SHALL 與同日 K 棒顏色一致
 
-#### Scenario: 與時間範圍聯動
-- **WHEN** 用戶切換 topbar `[1M]`、`[3M]`、`[6M]` 或 `[1Y]`
-- **THEN** K 線圖 SHALL 以對應的 startDate / endDate 重新請求並更新顯示
+#### Scenario: 與卡片 range 選擇器聯動
+- **WHEN** 用戶點擊 K 線圖卡片的 `[1M]`、`[3M]`、`[6M]` 或 `[1Y]` 按鈕
+- **THEN** K 線圖 SHALL 立即更新顯示範圍至對應期間（前端 slice，不重新請求 API）
 
 #### Scenario: Tooltip 顯示
 - **WHEN** 用戶 hover K 線圖任意日期

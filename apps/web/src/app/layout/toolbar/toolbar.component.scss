@@ -69,37 +69,4 @@
     }
   }
 
-  .range-buttons {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    background: rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    padding: 3px;
-    margin-left: 8px;
-
-    .range-btn {
-      background: transparent;
-      border: none;
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 0.82rem;
-      font-weight: 500;
-      padding: 4px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-      letter-spacing: 0.02em;
-
-      &:hover {
-        color: white;
-        background: rgba(255, 255, 255, 0.12);
-      }
-
-      &.active {
-        background: rgba(255, 255, 255, 0.28);
-        color: white;
-        font-weight: 600;
-      }
-    }
-  }
 }

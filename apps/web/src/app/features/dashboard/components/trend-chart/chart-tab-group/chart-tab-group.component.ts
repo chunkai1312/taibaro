@@ -1,9 +1,11 @@
-import { Component, input, signal, OnChanges } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
+import { DateTime } from 'luxon';
 import { MarketStats } from '../../../../../core/models/market-stats.model';
+import { TimeRange, RANGE_MONTHS } from '../../../../../core/services/dashboard-state.service';
 import { IndicatorChartComponent } from '../indicator-chart/indicator-chart.component';
 import { TAB_DEFINITIONS, buildChartOption, IndicatorDef } from '../chart-config';
 import type { EChartsOption } from 'echarts';
@@ -21,18 +23,29 @@ import type { EChartsOption } from 'echarts';
   templateUrl: './chart-tab-group.component.html',
   styleUrl: './chart-tab-group.component.scss',
 })
-export class ChartTabGroupComponent implements OnChanges {
+export class ChartTabGroupComponent {
   data = input<MarketStats[]>([]);
 
   readonly tabs = TAB_DEFINITIONS;
+  readonly localRange = signal<TimeRange>('3M');
+  readonly ranges: TimeRange[] = ['1M', '3M', '6M', '1Y'];
+
+  readonly filteredData = computed<MarketStats[]>(() => {
+    const data = this.data();
+    if (!data.length) return data;
+    const end = data[data.length - 1].date;
+    const months = RANGE_MONTHS[this.localRange()];
+    const cutoff = DateTime.fromISO(end).minus({ months }).toISODate() ?? '';
+    return data.filter(d => d.date >= cutoff);
+  });
 
   // 每個 Tab 目前選取的指標 index，預設都是 0
   readonly selectedIndicatorIndex = signal<number[]>(
     TAB_DEFINITIONS.map(() => 0)
   );
 
-  ngOnChanges() {
-    // 資料更新時強制重整 computed（signal 會自動 re-evaluate）
+  setLocalRange(range: TimeRange) {
+    this.localRange.set(range);
   }
 
   selectIndicator(tabIndex: number, indicatorIndex: number) {
@@ -44,7 +57,7 @@ export class ChartTabGroupComponent implements OnChanges {
   }
 
   getChartOption(tabIndex: number): EChartsOption | null {
-    const d = this.data();
+    const d = this.filteredData();
     if (!d.length) return null;
     const tab = this.tabs[tabIndex];
     const indIdx = this.selectedIndicatorIndex()[tabIndex];

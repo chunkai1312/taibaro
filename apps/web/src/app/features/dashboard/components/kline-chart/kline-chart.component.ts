@@ -1,11 +1,12 @@
 import { Component, computed, inject, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { Subject, combineLatest, switchMap, catchError, of, takeUntil } from 'rxjs';
+import { Subject, switchMap, catchError, of, takeUntil } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 import type { EChartsOption } from 'echarts';
 
-import { DashboardStateService } from '../../../../core/services/dashboard-state.service';
+import { DateTime } from 'luxon';
+import { DashboardStateService, TimeRange, RANGE_MONTHS } from '../../../../core/services/dashboard-state.service';
 import { TickerService } from '../../../../core/services/ticker.service';
 import { TickerOhlc } from '../../../../core/models/ticker-ohlc.model';
 import { IndicatorChartComponent } from '../trend-chart/indicator-chart/indicator-chart.component';
@@ -52,7 +53,6 @@ function buildKlineOption(data: TickerOhlc[]): EChartsOption {
     animation: false,
     backgroundColor: 'transparent',
     title: {
-      text: '加權指數',
       left: 12,
       top: 8,
       textStyle: { fontSize: 13, fontWeight: 600 },
@@ -173,27 +173,41 @@ export class KlineChartComponent implements OnDestroy {
   private tickerService = inject(TickerService);
   private destroy$ = new Subject<void>();
 
-  readonly klineData = signal<TickerOhlc[]>([]);
+  readonly localRange = signal<TimeRange>('3M');
+  readonly ranges: TimeRange[] = ['1M', '3M', '6M', '1Y'];
+
+  readonly rawData = signal<TickerOhlc[]>([]);
+
+  readonly filteredData = computed<TickerOhlc[]>(() => {
+    const data = this.rawData();
+    if (!data.length) return data;
+    const end = this.state.endDate();
+    const months = RANGE_MONTHS[this.localRange()];
+    const cutoff = DateTime.fromISO(end).minus({ months }).toISODate() ?? '';
+    return data.filter(d => d.date >= cutoff);
+  });
 
   readonly chartOption = computed<EChartsOption | null>(() => {
-    const data = this.klineData();
+    const data = this.filteredData();
     return data.length > 0 ? buildKlineOption(data) : null;
   });
 
+  setLocalRange(range: TimeRange) {
+    this.localRange.set(range);
+  }
+
   constructor() {
-    combineLatest([
-      toObservable(this.state.startDate),
-      toObservable(this.state.endDate),
-    ])
+    toObservable(this.state.endDate)
       .pipe(
-        switchMap(([start, end]) =>
-          this.tickerService.getTicker('IX0001', start, end).pipe(
+        switchMap((end) => {
+          const start = DateTime.fromISO(end).minus({ months: 12 }).toISODate() ?? '';
+          return this.tickerService.getTicker('IX0001', start, end).pipe(
             catchError(() => of([] as TickerOhlc[]))
-          )
-        ),
+          );
+        }),
         takeUntil(this.destroy$)
       )
-      .subscribe(data => this.klineData.set(data));
+      .subscribe(data => this.rawData.set(data));
   }
 
   ngOnDestroy() {

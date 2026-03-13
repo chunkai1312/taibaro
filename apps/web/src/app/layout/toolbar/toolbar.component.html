@@ -36,17 +36,6 @@
     </button>
   </div>
 
-  <!-- 時間範圍切換 -->
-  <div class="range-buttons">
-    @for (r of ranges; track r) {
-      <button
-        class="range-btn"
-        [class.active]="selectedRange() === r"
-        (click)="onRangeChange(r)"
-      >{{ r }}</button>
-    }
-  </div>
-
   <!-- 主題切換 -->
   <button mat-icon-button (click)="themeService.toggle()" [attr.aria-label]="isDark() ? '切換淺色模式' : '切換深色模式'">
     <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>

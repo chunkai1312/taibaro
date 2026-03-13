@@ -6,8 +6,9 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Subject, combineLatest, switchMap, catchError, of, takeUntil } from 'rxjs';
+import { Subject, switchMap, catchError, of, takeUntil } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { DateTime } from 'luxon';
 
 import { DashboardStateService } from '../../core/services/dashboard-state.service';
 import { BarometerService } from '../../core/services/barometer.service';
@@ -73,17 +74,15 @@ export class DashboardComponent implements OnDestroy {
         this.barometerData.set(result);
       });
 
-    // 監聽日期 + 時間範圍變化 → 重新載入市場數據
-    combineLatest([
-      toObservable(this.state.startDate),
-      toObservable(this.state.endDate),
-    ])
+    // 監聽日期變化 → 重新載入市場數據（固定手1Y）
+    toObservable(this.state.selectedDate)
       .pipe(
-        switchMap(([start, end]) =>
-          this.marketStatsService.getMarketStats(start, end).pipe(
+        switchMap((date) => {
+          const start = DateTime.fromISO(date).minus({ months: 12 }).toISODate() ?? '';
+          return this.marketStatsService.getMarketStats(start, date).pipe(
             catchError(() => of([] as MarketStats[]))
-          )
-        ),
+          );
+        }),
         takeUntil(this.destroy$)
       )
       .subscribe((data) => {

@@ -1,4 +1,12 @@
 <mat-card class="kline-card">
+  <div class="card-header">
+    <span class="card-title">加權指數日 K 線</span>
+    <div class="range-buttons">
+      @for (r of ranges; track r) {
+        <button class="range-btn" [class.active]="localRange() === r" (click)="setLocalRange(r)">{{ r }}</button>
+      }
+    </div>
+  </div>
   <mat-card-content>
     <div class="chart-content">
       <app-indicator-chart [option]="chartOption()" height="420px"></app-indicator-chart>

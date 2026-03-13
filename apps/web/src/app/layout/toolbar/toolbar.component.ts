@@ -10,10 +10,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { DateTime } from 'luxon';
-import { DashboardStateService, TimeRange } from '../../core/services/dashboard-state.service';
+import { DashboardStateService } from '../../core/services/dashboard-state.service';
 import { ThemeService } from '../../core/services/theme.service';
-
-export type { TimeRange };
 
 @Component({
   selector: 'app-toolbar',
@@ -35,8 +33,6 @@ export class ToolbarComponent {
   readonly themeService = inject(ThemeService);
   readonly isDark = this.themeService.isDark;
 
-  readonly ranges: TimeRange[] = ['1M', '3M', '6M', '1Y'];
-
   readonly selectedDateObj = computed(() =>
     new Date(this.state.selectedDate() + 'T00:00:00')
   );
@@ -45,8 +41,6 @@ export class ToolbarComponent {
     const d = this.state.selectedDate();
     return d ? d.substring(0, 10) : '';
   });
-
-  readonly selectedRange = this.state.selectedRange;
 
   readonly maxDate = new Date();
 
@@ -70,7 +64,4 @@ export class ToolbarComponent {
     this.state.setDate(DateTime.fromJSDate(date).toISODate() ?? '');
   }
 
-  onRangeChange(range: TimeRange) {
-    this.state.setRange(range);
-  }
 }
