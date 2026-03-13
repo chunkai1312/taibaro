@@ -21,6 +21,13 @@
       color: var(--text-primary);
     }
 
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .interval-buttons,
     .range-buttons {
       display: flex;
       align-items: center;

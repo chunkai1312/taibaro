@@ -1,10 +1,16 @@
 <mat-card class="kline-card">
   <div class="card-header">
-    <span class="card-title">加權指數日 K 線</span>
-    <div class="range-buttons">
-      @for (r of ranges; track r) {
-        <button class="range-btn" [class.active]="localRange() === r" (click)="setLocalRange(r)">{{ r }}</button>
-      }
+    <span class="card-title">加權指數 K 線</span>
+    <div class="header-controls">
+      <div class="interval-buttons">
+        <button class="range-btn" [class.active]="chartInterval() === 'D'" (click)="setChartInterval('D')">日K</button>
+        <button class="range-btn" [class.active]="chartInterval() === 'W'" (click)="setChartInterval('W')">週K</button>
+      </div>
+      <div class="range-buttons">
+        @for (r of ranges(); track r) {
+          <button class="range-btn" [class.active]="localRange() === r" (click)="setLocalRange(r)">{{ r }}</button>
+        }
+      </div>
     </div>
   </div>
   <div class="ma-bar">

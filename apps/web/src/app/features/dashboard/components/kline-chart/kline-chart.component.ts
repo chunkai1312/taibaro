@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { Subject, switchMap, catchError, of, takeUntil } from 'rxjs';
+import { Subject, combineLatest, switchMap, catchError, of, takeUntil } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 import type { EChartsOption } from 'echarts';
 
@@ -22,6 +22,29 @@ const MA_DEFS: { period: number; color: string }[] = [
   { period: 120, color: '#EC4899' },  // 粉紅
   { period: 240, color: '#A3E635' },  // 黃綠
 ];
+
+function aggregateToWeekly(data: TickerOhlc[]): TickerOhlc[] {
+  if (!data.length) return [];
+  const weeks = new Map<string, TickerOhlc[]>();
+  for (const d of data) {
+    const dt = DateTime.fromISO(d.date);
+    const key = `${dt.weekYear}-${String(dt.weekNumber).padStart(2, '0')}`;
+    if (!weeks.has(key)) weeks.set(key, []);
+    weeks.get(key)!.push(d);
+  }
+  const result: TickerOhlc[] = [];
+  for (const days of weeks.values()) {
+    result.push({
+      date: days[days.length - 1].date,
+      openPrice: days[0].openPrice,
+      highPrice: Math.max(...days.map(d => d.highPrice)),
+      lowPrice: Math.min(...days.map(d => d.lowPrice)),
+      closePrice: days[days.length - 1].closePrice,
+      tradeValue: days.reduce((s, d) => s + d.tradeValue, 0),
+    });
+  }
+  return result;
+}
 
 function calcMa(period: number, closes: number[]): (number | null)[] {
   return closes.map((_, i) => {
@@ -172,13 +195,21 @@ export class KlineChartComponent implements OnDestroy {
 
   readonly maDefs = MA_DEFS;
   readonly localRange = signal<TimeRange>('3M');
-  readonly ranges: TimeRange[] = ['1M', '3M', '6M', '1Y'];
+  readonly chartInterval = signal<'D' | 'W'>('D');
+
+  readonly ranges = computed<TimeRange[]>(() =>
+    this.chartInterval() === 'W'
+      ? ['3M', '6M', '1Y', '2Y']
+      : ['1M', '3M', '6M', '1Y']
+  );
 
   readonly rawData = signal<TickerOhlc[]>([]);
   readonly hoveredIndex = signal<number | null>(null);
 
+  readonly weeklyData = computed<TickerOhlc[]>(() => aggregateToWeekly(this.rawData()));
+
   readonly filteredData = computed<TickerOhlc[]>(() => {
-    const data = this.rawData();
+    const data = this.chartInterval() === 'W' ? this.weeklyData() : this.rawData();
     if (!data.length) return data;
     const end = this.state.endDate();
     const months = RANGE_MONTHS[this.localRange()];
@@ -189,7 +220,7 @@ export class KlineChartComponent implements OnDestroy {
   // 預先計算各 MA 序列（顯示區間的完整陣列）
   readonly maData = computed<(number | null)[][]>(() => {
     const display = this.filteredData();
-    const all = this.rawData();
+    const all = this.chartInterval() === 'W' ? this.weeklyData() : this.rawData();
     if (!display.length || !all.length) return MA_DEFS.map(() => []);
     const allCloses = all.map(d => d.closePrice);
     const offset = all.length - display.length;
@@ -207,7 +238,7 @@ export class KlineChartComponent implements OnDestroy {
 
   readonly chartOption = computed<EChartsOption | null>(() => {
     const display = this.filteredData();
-    const all = this.rawData();
+    const all = this.chartInterval() === 'W' ? this.weeklyData() : this.rawData();
     if (!display.length) return null;
     return buildKlineOption(display, all, (idx) => this.hoveredIndex.set(idx));
   });
@@ -216,15 +247,29 @@ export class KlineChartComponent implements OnDestroy {
     this.localRange.set(range);
   }
 
+  setChartInterval(interval: 'D' | 'W') {
+    const newRanges: TimeRange[] = interval === 'W'
+      ? ['3M', '6M', '1Y', '2Y']
+      : ['1M', '3M', '6M', '1Y'];
+    if (!newRanges.includes(this.localRange())) {
+      this.localRange.set(interval === 'W' ? '3M' : '1Y');
+    }
+    this.chartInterval.set(interval);
+  }
+
   resetHover() {
     this.hoveredIndex.set(null);
   }
 
   constructor() {
-    toObservable(this.state.endDate)
+    combineLatest([
+      toObservable(this.state.endDate),
+      toObservable(this.chartInterval),
+    ])
       .pipe(
-        switchMap((end) => {
-          const start = DateTime.fromISO(end).minus({ months: 12 }).toISODate() ?? '';
+        switchMap(([end, interval]) => {
+          const months = interval === 'W' ? 24 : 12;
+          const start = DateTime.fromISO(end).minus({ months }).toISODate() ?? '';
           return this.tickerService.getTicker('IX0001', start, end).pipe(
             catchError(() => of([] as TickerOhlc[]))
           );
